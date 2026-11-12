@@ -1,0 +1,855 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>MCBP Support Dashboard</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Public+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#f3f6fa; --surface:#ffffff; --ink:#0f1b2d; --ink2:#46546a; --muted:#66738a; --line:#dce3ed; --track:#e6ecf4;
+  --accent:#2a78d6; --accent-weak:#e2edfb; --btn:#1f64bd; --btn-ink:#ffffff; --bad:#b3261e; --ok:#1a8f4c;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#eda100;
+  --font:'Public Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif; --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0d1420; --surface:#151e2e; --ink:#eaf0f8; --ink2:#b8c3d4; --muted:#8b97ab; --line:#25314a; --track:#1f2b41;
+  --accent:#3987e5; --accent-weak:#1a2c49; --btn:#2f73d0; --btn-ink:#ffffff; --bad:#f2928b; --ok:#3fbf76;
+  --s1:#3987e5; --s2:#d95926; --s3:#c98500; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0d1420; --surface:#151e2e; --ink:#eaf0f8; --ink2:#b8c3d4; --muted:#8b97ab; --line:#25314a; --track:#1f2b41;
+  --accent:#3987e5; --accent-weak:#1a2c49; --btn:#2f73d0; --btn-ink:#ffffff; --bad:#f2928b; --ok:#3fbf76;
+  --s1:#3987e5; --s2:#d95926; --s3:#c98500; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.45;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 32px}
+body.lock{overflow:hidden}
+button{font:inherit}
+.app{max-width:1380px;margin:0 auto;padding-top:16px;display:grid;grid-template-columns:236px minmax(0,1fr);gap:20px;align-items:start}
+
+/* Login Screen */
+#login-screen{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px}
+.login-box{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:32px;width:100%;max-width:400px;box-shadow:0 10px 30px rgba(0,0,0,0.08)}
+.login-box h1{font-size:24px;margin:0 0 8px;text-align:center;color:var(--accent)}
+.login-box p{text-align:center;color:var(--muted);margin:0 0 24px;font-size:13px}
+.login-field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.login-field label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.login-field input{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px;width:100%;transition:border-color 0.2s}
+.login-field input:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--accent-weak)}
+.login-btn{width:100%;padding:12px;font-size:15px;margin-top:8px}
+.login-error{color:var(--bad);font-size:13px;text-align:center;margin-top:12px;font-weight:600;display:none}
+
+/* sidebar */
+.side{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:4px;box-shadow:0 4px 12px rgba(0,0,0,0.02)}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 6px 12px;border-bottom:1px solid var(--line);margin-bottom:8px}
+.mark{width:34px;height:34px;border-radius:8px;background:var(--btn);color:var(--btn-ink);display:grid;place-items:center;font-family:var(--mono);font-weight:500;font-size:12px}
+.brand b{display:block;font-size:14px;line-height:1.2}
+.brand span{display:block;font-size:12px;color:var(--muted);line-height:1.2}
+.nav-item,.nav-sub{display:flex;align-items:center;gap:10px;width:100%;text-align:left;color:var(--ink2);background:none;border:0;border-radius:8px;padding:10px 12px;cursor:pointer;font-weight:600;transition:all 0.2s}
+.nav-item:hover,.nav-sub:hover{background:var(--accent-weak);color:var(--ink)}
+.nav-item[aria-current=page],.nav-sub[aria-current=page]{background:var(--accent-weak);color:var(--ink);box-shadow:inset 3px 0 0 var(--accent)}
+.nav-item.group-active{color:var(--ink)}
+.nav-item svg{flex:none}
+.nav-item .chev{margin-left:auto;transition:transform .2s}
+.nav-item[aria-expanded=true] .chev{transform:rotate(180deg)}
+.sub{display:flex;flex-direction:column;gap:2px;margin:0 0 4px 22px;padding-left:10px;border-left:1px solid var(--line)}
+.nav-sub{font-weight:500;padding:8px 10px}
+.logout-btn{margin-top:auto;color:var(--bad);border-top:1px solid var(--line);padding-top:12px;margin-top:12px}
+.logout-btn:hover{background:#fdf0ef;color:var(--bad)}
+
+.topbar{display:none}
+.scrim{display:none}
+@media (max-width:900px){
+  .app{grid-template-columns:minmax(0,1fr);gap:12px;padding-top:0}
+  .topbar{display:flex;align-items:center;gap:10px;position:sticky;top:env(safe-area-inset-top,0px);z-index:8;background:var(--bg);padding:10px 0;font-weight:700}
+  .topbar button{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:8px;width:40px;height:40px;display:grid;place-items:center;cursor:pointer}
+  .side{position:fixed;left:0;top:0;bottom:0;z-index:20;width:min(290px,86vw);border-radius:0 10px 10px 0;padding:calc(env(safe-area-inset-top,0px) + 12px) 12px calc(env(safe-area-inset-bottom,0px) + 12px) calc(env(safe-area-inset-left,0px) + 12px);transform:translateX(-105%);transition:transform .2s;overflow:auto}
+  .side.open{transform:none}
+  .scrim.show{display:block;position:fixed;inset:0;z-index:15;background:color-mix(in srgb,var(--ink) 45%,transparent)}
+}
+
+.main{min-width:0}
+.page-head{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center;justify-content:space-between;padding:4px 0 16px}
+h1{font-size:22px;font-weight:700;margin:0;letter-spacing:-.01em;text-wrap:balance}
+.sub-t{color:var(--muted);font-size:13px;margin-top:2px}
+.banner{background:var(--accent-weak);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:12px;color:var(--ink)}
+.syncbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:-4px 0 12px;padding:0 2px;min-height:24px}
+.syncbar .dotstat{width:8px;height:8px;border-radius:50%;background:var(--muted);flex:none}
+.syncbar.online .dotstat{background:var(--ok)}
+.syncbar.syncing .dotstat{background:var(--s3);animation:mcbp-pulse 1s infinite}
+.syncbar.error .dotstat{background:var(--bad)}
+.syncbar #conn-text{font-weight:600;color:var(--ink2)}
+.syncbar .btn{padding:3px 10px;font-size:12px;margin-left:auto}
+@keyframes mcbp-pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.bar{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-bottom:16px;box-shadow:0 2px 6px rgba(0,0,0,0.02)}
+@media (min-width:901px){.bar.stick{position:sticky;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:5}}
+.f{display:flex;flex-direction:column;gap:4px;min-width:0;flex:1 1 130px}
+.f label,.fld label{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+select,input[type=search],input[type=text],input[type=tel],input[type=number],input[type=password],input[type=email],textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0;width:100%;transition:border-color 0.2s}
+select:focus,input:focus,textarea:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--accent-weak)}
+textarea{resize:vertical;min-height:84px}
+input[readonly]{opacity:.75;background:var(--track)}
+[aria-invalid=true]{border-color:var(--bad)}
+.btn{font-weight:600;color:var(--accent);background:transparent;border:1px solid var(--line);border-radius:8px;padding:8px 14px;cursor:pointer;transition:all 0.2s}
+.btn:hover{background:var(--accent-weak)}
+.btn.primary{background:var(--btn);color:var(--btn-ink);border-color:var(--btn);box-shadow:0 2px 4px rgba(31,100,189,0.2)}
+.btn.primary:hover{filter:brightness(1.08);box-shadow:0 4px 8px rgba(31,100,189,0.3)}
+.btn:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:16px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0;box-shadow:0 2px 8px rgba(0,0,0,0.03);transition:transform 0.2s,box-shadow 0.2s}
+.kpi:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,0.06)}
+.kpi .l{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.kpi .v{font-family:var(--mono);font-size:28px;font-weight:500;margin-top:4px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.kpi .n{font-size:12px;color:var(--ink2);margin-top:2px;overflow-wrap:anywhere}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:16px}
+@media (max-width:1100px){.grid{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0;box-shadow:0 2px 8px rgba(0,0,0,0.03);transition:box-shadow 0.2s}
+.card:hover{box-shadow:0 6px 16px rgba(0,0,0,0.05)}
+.card.full{grid-column:1/-1}
+h2{font-size:15px;font-weight:700;margin:0 0 4px}
+.hint{font-size:12px;color:var(--muted);margin:0 0 16px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12px;color:var(--ink2);margin-bottom:12px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.s1{background:var(--s1)}.s2{background:var(--s2)}.s3{background:var(--s3)}
+.row{display:grid;grid-template-columns:minmax(110px,34%) 1fr auto;gap:12px;align-items:center;width:100%;text-align:left;color:inherit;background:none;border:0;border-radius:8px;padding:8px;cursor:pointer;transition:background 0.2s}
+.row:hover{background:var(--accent-weak)}
+.row.on{background:var(--accent-weak);box-shadow:inset 0 0 0 1px var(--accent)}
+.row .nm{font-size:13px;overflow-wrap:anywhere}
+.row .val{font-family:var(--mono);font-size:12px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.row .val small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+.stack{display:flex;gap:2px;height:16px}
+.stack span{display:block;height:100%;border-radius:0 4px 4px 0;min-width:4px}
+.nest{height:16px;background:var(--track);border-radius:0 4px 4px 0;position:relative}
+.nest i{position:absolute;left:0;top:0;bottom:0;background:var(--accent);border-radius:0 4px 4px 0;min-width:2px}
+.cols{display:flex;align-items:flex-end;gap:16px;height:220px;padding-top:10px;border-bottom:1px solid var(--line);overflow-x:auto;padding-bottom:2px}
+.col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;min-width:40px;background:none;border:0;color:inherit;cursor:pointer;padding:0;border-radius:8px 8px 0 0;transition:background 0.2s}
+.col:hover,.col.on{background:var(--accent-weak)}
+.col .t{font-family:var(--mono);font-size:13px;font-weight:600;margin-bottom:6px}
+.col .st{display:flex;flex-direction:column-reverse;gap:2px;width:min(64px,70%)}
+.col .st span{display:block;border-radius:4px 4px 0 0}
+.mlab{display:flex;gap:16px;overflow-x:auto;padding-bottom:8px}
+.mlab div{flex:1;text-align:center;font-size:12px;color:var(--ink2);padding-top:8px;min-width:40px;white-space:nowrap}
+@media (max-width:600px){
+  .mlab div { font-size: 11px; min-width: 35px; }
+  .col .t { font-size: 11px; }
+  .bar .f { flex: 1 1 100%; }
+}
+.scroll{overflow-x:auto;max-width:100%;border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+td.wrap{white-space:normal;min-width:180px;max-width:320px}
+th{position:sticky;top:0;background:var(--surface);font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:0;z-index:1;box-shadow:0 1px 0 var(--line)}
+th button{letter-spacing:inherit;text-transform:inherit;color:inherit;font-weight:inherit;background:none;border:0;cursor:pointer;padding:12px;width:100%;text-align:inherit;transition:color 0.2s}
+th button:hover{color:var(--ink)}
+th[aria-sort] button{color:var(--accent)}
+td.n,th.n{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+th.n button{text-align:right}
+tr.clk{cursor:pointer;transition:background 0.1s}
+tr.clk:hover td{background:var(--accent-weak)}
+tr:last-child td{border-bottom:none}
+.tbl-max{max-height:520px;overflow:auto;border:1px solid var(--line);border-radius:8px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:2px 10px 2px 8px;border-radius:99px;border:1px solid var(--line);background:var(--bg)}
+.chip b{display:inline-block;width:8px;height:8px;border-radius:50%}
+.heat td.c{text-align:center;font-family:var(--mono)}
+.note{font-size:12px;color:var(--muted);margin-top:24px;max-width:90ch;line-height:1.6}
+.empty{color:var(--muted);padding:24px 0;text-align:center;white-space:normal}
+.overlay{position:fixed;inset:0;z-index:30;background:color-mix(in srgb,var(--ink) 50%,transparent);backdrop-filter:blur(2px);display:grid;place-items:center;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.modal{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:14px;width:min(680px,100%);max-height:100%;overflow:auto;display:flex;flex-direction:column;box-shadow:0 12px 32px rgba(0,0,0,0.15)}
+.m-head{display:flex;gap:12px;justify-content:space-between;align-items:flex-start;padding:20px 24px 12px}
+.m-head h2{font-size:18px}
+.x{background:none;border:1px solid var(--line);color:var(--ink2);width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:18px;line-height:1;display:grid;place-items:center;transition:all 0.2s}
+.x:hover{background:var(--bad);color:#fff;border-color:var(--bad)}
+.m-body{padding:8px 24px 16px;min-width:0}
+.m-foot{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end;padding:16px 24px 20px;border-top:1px solid var(--line);background:var(--bg);border-radius:0 0 14px 14px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 20px}
+@media (max-width:560px){.grid2{grid-template-columns:minmax(0,1fr)}}
+.fld{display:flex;flex-direction:column;gap:6px;min-width:0}
+.fld.full{grid-column:1/-1}
+.req{color:var(--bad)}
+.hint2{font-size:12px;color:var(--muted)}
+.err{color:var(--bad);font-weight:600;margin:12px 0 0;font-size:13px;background:#fdf0ef;padding:10px;border-radius:6px;border:1px solid #f5c6c2}
+dl.kv{display:grid;grid-template-columns:minmax(110px,32%) minmax(0,1fr);gap:12px 16px;margin:16px 0 0}
+dl.kv dt{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:2px}
+dl.kv dd{margin:0;overflow-wrap:anywhere;white-space:pre-wrap;font-size:14px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-top:10px;flex-wrap:wrap}
+.seg button{background:none;border:0;border-right:1px solid var(--line);padding:8px 16px;font-weight:600;color:var(--ink2);cursor:pointer;transition:all 0.2s}
+.seg button:last-child{border-right:0}
+.seg button:hover:not(:disabled){background:var(--accent-weak)}
+.seg button[aria-pressed=true]{background:var(--accent-weak);color:var(--ink);box-shadow:inset 0 -3px 0 var(--accent)}
+.seg button:disabled{cursor:not-allowed;opacity:.6}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;pointer-events:none;background:var(--ink);color:var(--surface);padding:12px 20px;border-radius:8px;font-weight:600;z-index:50;max-width:calc(100% - 32px);transition:opacity .2s,transform .2s;box-shadow:0 8px 24px rgba(0,0,0,0.2)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+</style>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-box">
+    <h1>MCBP Support Desk</h1>
+    <p>Sign in to access the dashboard</p>
+    <form id="login-form">
+      <div class="login-field">
+        <label for="login-user">Username</label>
+        <input type="text" id="login-user" autocomplete="username" required>
+      </div>
+      <div class="login-field">
+        <label for="login-pass">Password</label>
+        <input type="password" id="login-pass" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn primary login-btn" id="login-btn">Login</button>
+      <div class="login-error" id="login-error"></div>
+    </form>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div class="app" id="main-app" style="display:none">
+  <div class="topbar">
+    <button type="button" id="menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="side"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    <span id="top-title">Home</span>
+  </div>
+  <div class="scrim" id="scrim"></div>
+
+  <aside class="side" id="side" aria-label="Sidebar">
+    <div class="brand"><div class="mark" aria-hidden="true">MCBP</div><div><b>Support Desk</b><span id="user-display">Intern Team</span></div></div>
+    <nav id="nav" aria-label="Main navigation" style="display:flex;flex-direction:column;gap:4px">
+      <button type="button" class="nav-item" data-go="home" aria-current="page">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>Home</button>
+      
+      <button type="button" class="nav-item" data-go="my">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>My Issues
+      </button>
+
+      <button type="button" class="nav-item" id="nav-add" aria-expanded="false" aria-controls="sub-add">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Add Issue
+        <svg class="chev" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="sub" id="sub-add" hidden>
+        <button type="button" class="nav-sub" data-go="upz">Union / Upazila</button>
+        <button type="button" class="nav-sub" data-go="fac">Factory</button>
+      </div>
+      
+      <button type="button" class="nav-item" id="btn-reset-pass">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Reset Password
+      </button>
+
+      <button type="button" class="nav-item logout-btn" id="btn-logout">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Logout
+      </button>
+    </nav>
+  </aside>
+
+  <main class="main" id="main">
+    <div class="banner" id="banner" role="status" hidden></div>
+    <div class="syncbar" id="syncbar" role="status" aria-live="polite">
+      <span class="dotstat" aria-hidden="true"></span>
+      <span id="conn-text">Connecting…</span>
+      <span id="sync-time"></span>
+      <button class="btn" id="btn-refresh" type="button" title="Reload from Google Sheets">Refresh</button>
+    </div>
+
+    <section id="p-home">
+      <div class="page-head"><div><h1>MCBP Support Dashboard</h1><div class="sub-t">Mother and Child Beneficiary Program · Intern Team</div></div></div>
+      <div class="bar stick" role="search" aria-label="Issue filters">
+        <div class="f"><label for="f-group">Group</label><select id="f-group"></select></div>
+        <div class="f"><label for="f-cat">Issue type</label><select id="f-cat"></select></div>
+        <div class="f"><label for="f-status">Status</label><select id="f-status"></select></div>
+        <div class="f"><label for="f-month">Month</label><select id="f-month"></select></div>
+        <div class="f"><label for="f-q">Search by ID</label><input type="search" id="f-q" placeholder="e.g. U-611 or F-70"></div>
+        <button class="btn" id="reset-home" type="button">Reset</button>
+      </div>
+      <div class="kpis" id="k-home"></div>
+      <div class="grid">
+        <div class="card"><h2>Issues by type</h2><p class="hint">Click a row to filter. Bar length is issue count; the right column gives the share of issues shown.</p>
+          <div class="legend"><span><i class="dot s1"></i>Resolved</span><span><i class="dot s2"></i>Pending</span><span><i class="dot s3"></i>Processing</span></div>
+          <div id="c-cat"></div></div>
+        <div class="card"><h2>Issues by month</h2><p class="hint">Click a column to filter by month.</p>
+          <div class="legend"><span><i class="dot s1"></i>Resolved</span><span><i class="dot s2"></i>Pending</span><span><i class="dot s3"></i>Processing</span></div>
+          <div id="c-month"></div></div>
+        <div class="card"><h2>Resolution by group</h2><p class="hint">Click a group to filter. Factory adds up BGMEA, BKMEA and FLAXA.</p><div class="scroll" id="c-group"></div></div>
+        <div class="card"><h2>Issue type by group</h2><p class="hint">Count of issues. Darker cells mean more issues.</p><div class="scroll" id="c-heat"></div></div>
+        <div class="card full"><h2>Issue list</h2><p class="hint" id="t-count"></p><div class="tbl-max scroll" id="t-home"></div></div>
+      </div>
+    </section>
+
+    <section id="p-my" hidden>
+      <div class="page-head"><div><h1>My Issues</h1><div class="sub-t" id="my-count"></div></div><button type="button" class="btn primary" data-add="union">Add New Issue</button></div>
+      <div class="bar" role="search" aria-label="My issues filters">
+        <div class="f"><label for="my-status">Status</label><select id="my-status"></select></div>
+        <div class="f"><label for="my-cat">Issue type</label><select id="my-cat"></select></div>
+        <div class="f"><label for="my-q">Search</label><input type="search" id="my-q" placeholder="ID, name, NID, contact"></div>
+        <button class="btn" id="reset-my" type="button">Reset</button>
+      </div>
+      <div class="card"><div class="tbl-max scroll" id="my-table"></div></div>
+    </section>
+
+    <section id="p-upz" hidden>
+      <div class="page-head"><div><h1>Union / Upazila issues</h1><div class="sub-t" id="u-count"></div></div><button type="button" class="btn primary" data-add="union">Add New Issue</button></div>
+      <div class="bar" role="search" aria-label="Union and Upazila issue filters">
+        <div class="f"><label for="u-status">Status</label><select id="u-status"></select></div>
+        <div class="f"><label for="u-cat">Issue type</label><select id="u-cat"></select></div>
+        <div class="f"><label for="u-q">Search</label><input type="search" id="u-q" placeholder="ID, name, NID, contact"></div>
+        <button class="btn" id="reset-u" type="button">Reset</button>
+      </div>
+      <div class="card"><div class="tbl-max scroll" id="u-table"></div></div>
+    </section>
+
+    <section id="p-fac" hidden>
+      <div class="page-head"><div><h1>Factory issues</h1><div class="sub-t" id="f-count"></div></div><button type="button" class="btn primary" data-add="factory">Add New Issue</button></div>
+      <div class="bar" role="search" aria-label="Factory issue filters">
+        <div class="f"><label for="fx-fac">Factory</label><select id="fx-fac"></select></div>
+        <div class="f"><label for="fx-status">Status</label><select id="fx-status"></select></div>
+        <div class="f"><label for="fx-cat">Issue type</label><select id="fx-cat"></select></div>
+        <div class="f"><label for="fx-q">Search</label><input type="search" id="fx-q" placeholder="ID, name, NID, number"></div>
+        <button class="btn" id="reset-f" type="button">Reset</button>
+      </div>
+      <div class="card"><div class="tbl-max scroll" id="f-table"></div></div>
+    </section>
+  </main>
+</div>
+
+<div class="overlay" id="ov" hidden><div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="m-title"></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const CONFIG = {
+  API_URL: "https://script.google.com/macros/s/AKfycbwR7zULY-Q3CALga6Y1XS7uyWV6ZU0VGRoSzMQRbpDuXKkeYvSO90TJI6HP9rlVHu8Y/exec",
+  AUTO_REFRESH_INTERVAL: 30000,
+  REQUEST_TIMEOUT: 25000
+};
+
+const CATS=['OTP / Mobile Number Update','Beneficiary Channel Transfer','Payment / Bank Account Info Update','Password Reset','Beneficiary Status Change','Other (Application, Rename, Activation, Misc.)'];
+const STATUSES=['Pending','Processing','Resolved'];
+const FACTORIES=['BGMEA','BKMEA','FLAXA'];
+const GROUPS=['Union/Upazila','Factory','BGMEA','BKMEA','FLAXA'];
+const SC={Resolved:'s1',Pending:'s2',Processing:'s3'}, SI={Resolved:'✓',Pending:'●',Processing:'↻'};
+const MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const PAGES={home:'Home',my:'My Issues',upz:'Union / Upazila issues',fac:'Factory issues'};
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=n=>Number(n).toLocaleString('en-US');
+const pct=(a,b)=>b?(a/b*100).toFixed(1)+'%':'0.0%';
+const dash=v=>(v===''||v==null)?'—':esc(v);
+const mLabel=m=>MN[+m.slice(5,7)-1]+' '+m.slice(0,4);
+const todayStr=()=>{const d=new Date(),p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())};
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,10);
+function maskId(v){const s=String(v==null?'':v);if(s.length<=4)return s;return '•'.repeat(Math.min(8,s.length-4))+s.slice(-4);}
+
+let SESSION = JSON.parse(localStorage.getItem('mcbp_session')) || null;
+let SESSION_EXPIRY = parseInt(localStorage.getItem('mcbp_expiry')) || 0;
+
+const api=(function(){
+  function configured(){return typeof CONFIG.API_URL==='string' && /^https:\/\/script\.google\.com\//.test(CONFIG.API_URL);}
+  function mkErr(code,msg){const e=new Error(msg||code);e.code=code;return e}
+  async function call(action,payload){
+    if(!configured()) throw mkErr('not_configured','CONFIG.API_URL is not set.');
+    const body=JSON.stringify({action:action,payload:Object.assign({token:SESSION?SESSION.token:''},payload||{})});
+    const ctrl=new AbortController();
+    const timer=setTimeout(()=>ctrl.abort(),CONFIG.REQUEST_TIMEOUT||25000);
+    let res;
+    try{res=await fetch(CONFIG.API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:body,redirect:'follow',signal:ctrl.signal});}
+    catch(e){clearTimeout(timer);if(e&&e.name==='AbortError') throw mkErr('timeout','The request timed out.');throw mkErr('network','Cannot reach the server.');}
+    clearTimeout(timer);
+    if(!res.ok) throw mkErr('http','HTTP '+res.status);
+    const txt=await res.text();
+    let json;
+    try{json=JSON.parse(txt)}catch(e){throw mkErr('bad_response','The server did not return JSON.');}
+    if(!json||json.success!==true) throw mkErr((json&&json.error)||'server_error',(json&&json.message)||'The request failed.');
+    return json.data||{};
+  }
+  return {
+    login:(username, password)=>call('login', {username, password}),
+    logout:()=>call('logout'),
+    resetPassword:(data)=>call('resetPassword', {data: data}),
+    getAllIssues:()=>call('getAllIssues'),
+    createIssue:(channel,data)=>call('createIssue',{channel:channel,data:data,clientRequestId:uid()}),
+    updateIssue:(id,data)=>call('updateIssue',{issueId:id,data:data}),
+    updateStatus:(id,status)=>call('updateStatus',{issueId:id,status:status}),
+    refreshData:()=>refreshData()
+  };
+})();
+
+const A={page:'home',issues:[],loaded:false,syncing:false,conn:'idle',err:'',lastSync:null,canWrite:false};
+const S={group:'',cat:'',status:'',month:'',q:''};
+const MY={status:'',cat:'',q:''};
+const M={upz:{status:'',cat:'',q:''},fac:{factory:'',status:'',cat:'',q:''}};
+const SORT={H:['date',-1],MY:['date',-1],U:['date',-1],F:['date',-1]};
+const MOD={mode:'',key:'',ch:'',last:null};
+
+function norm(id,d){
+  const ch=d.channel==='factory'||d.channel==='union'?d.channel:(String(id).charAt(0).toUpperCase()==='F'?'factory':'union');
+  const group=ch==='union'?'Union/Upazila':(FACTORIES.includes(d.group)?d.group:'Unspecified');
+  const date=String(d.date||'').slice(0,10);
+  return {key:String(id),channel:ch,group,date,month:date.slice(0,7),category:String(d.category||''),status:STATUSES.includes(d.status)?d.status:'Pending',
+    username:String(d.username||''),contact:String(d.contact||''),resolvedBy:String(d.resolvedBy||''),
+    details:String(d.details||''),resolution:String(d.resolution||''),
+    createdAt:String(d.createdAt||''),updatedAt:String(d.updatedAt||''),
+    createdBy:String(d.createdBy||''),updatedBy:String(d.updatedBy||'')};
+}
+
+const issueByKey=k=>A.issues.find(r=>r.key===k);
+function matchGroup(r,g){if(!g)return true;if(g==='Union/Upazila')return r.channel==='union';if(g==='Factory')return r.channel==='factory';return r.group===g}
+const cnt=rows=>{const c={Pending:0,Processing:0,Resolved:0};rows.forEach(r=>c[r.status]++);return c};
+const chip=s=>`<span class="chip"><b class="${SC[s]}"></b>${SI[s]} ${s}</span>`;
+function sortRows(rows,[k,d]){return rows.slice().sort((a,b)=>{const x=a[k]==null?'':a[k],y=b[k]==null?'':b[k];const c=(typeof x==='number'&&typeof y==='number')?x-y:String(x).localeCompare(String(y),undefined,{numeric:true});return c*d||String(b.key||b.upz).localeCompare(String(a.key||a.upaz),undefined,{numeric:true})})}
+function table(cols,rows,sortKey,open,emptyMsg){
+  const sort=SORT[sortKey];
+  const head=cols.map(c=>`<th class="${c.n?'n':''}" ${sort[0]===c.k?`aria-sort="${sort[1]>0?'ascending':'descending'}"`:''}><button type="button" data-sort="${sortKey}:${c.k}">${c.l}${sort[0]===c.k?(sort[1]>0?' ▲':' ▼'):''}</button></th>`).join('');
+  const body=sortRows(rows,sort).map(r=>`<tr ${open?`class="clk" tabindex="0" data-open="${esc(r.key)}"`:''}>`+cols.map(c=>`<td class="${c.n?'n':''}${c.wrap?' wrap':''}">${c.f?c.f(r):dash(r[c.k])}</td>`).join('')+'</tr>').join('');
+  return `<table><thead><tr>${head}</tr></thead><tbody>${body||`<tr><td colspan="${cols.length}" class="empty">${emptyMsg||'No rows match the filters.'}</td></tr>`}</tbody></table>`;
+}
+function fill(id,vals,all,labels){const el=$(id),cur=el.value;el.innerHTML=(all?`<option value="">${all}</option>`:'')+vals.map(v=>`<option value="${esc(v)}">${esc(labels?labels(v):v)}</option>`).join('');el.value=vals.includes(cur)?cur:''}
+
+const canChange=()=>A.loaded===true&&A.canWrite===true;
+function bannerText(){
+  if(A.conn==='error'&&!A.loaded) return 'Cannot load data: '+(A.err||'unknown error');
+  if(!A.loaded) return '';
+  if(A.canWrite===false) return 'You can view data but not change them.';
+  return '';
+}
+
+function setSub(open){const b=$('#nav-add');b.setAttribute('aria-expanded',open);$('#sub-add').hidden=!open}
+function go(p){
+  A.page=p;closeModal(true);
+  for(const id of ['home','my','upz','fac'])$('#p-'+id).hidden=id!==p;
+  document.querySelectorAll('[data-go]').forEach(b=>b.getAttribute('aria-current')&&b.removeAttribute('aria-current'));
+  const cur=document.querySelector(`[data-go="${p}"]`);if(cur)cur.setAttribute('aria-current','page');
+  const inAdd=p==='upz'||p==='fac';$('#nav-add').classList.toggle('group-active',inAdd);if(inAdd)setSub(true);
+  $('#top-title').textContent=PAGES[p];closeDrawer();render();window.scrollTo(0,0);
+}
+function openDrawer(){$('#side').classList.add('open');$('#scrim').classList.add('show');$('#menu-btn').setAttribute('aria-expanded','true')}
+function closeDrawer(){$('#side').classList.remove('open');$('#scrim').classList.remove('show');$('#menu-btn').setAttribute('aria-expanded','false')}
+
+function homeFilt(skip=[]){const q=S.q.trim().toLowerCase();
+  return A.issues.filter(r=>(skip.includes('group')||matchGroup(r,S.group))&&(skip.includes('cat')||!S.cat||r.category===S.cat)&&(skip.includes('status')||!S.status||r.status===S.status)&&(skip.includes('month')||!S.month||r.month===S.month)&&(!q||r.key.toLowerCase().includes(q)))}
+function renderHome(){
+  const months=[...new Set(A.issues.map(r=>r.month).filter(Boolean))].sort();
+  fill('#f-month',months,'All months',mLabel);
+  if(S.month&&!months.includes(S.month))S.month='';
+  $('#f-group').value=S.group;$('#f-cat').value=S.cat;$('#f-status').value=S.status;$('#f-month').value=S.month;
+  const rows=homeFilt(),c=cnt(rows),total=rows.length;
+  const top=Object.entries(rows.reduce((m,r)=>(m[r.category]=(m[r.category]||0)+1,m),{})).sort((a,b)=>b[1]-a[1])[0];
+  $('#k-home').innerHTML=[['Issues logged',fmt(total),'in the selected filters'],['Resolution rate',total?pct(c.Resolved,total):'—',fmt(c.Resolved)+' resolved'],['Pending',fmt(c.Pending),pct(c.Pending,total)+' of issues'],['Processing',fmt(c.Processing),pct(c.Processing,total)+' of issues'],['Most common type',top?pct(top[1],total):'—',top?top[0]:'No issues']]
+    .map(k=>`<div class="kpi"><div class="l">${k[0]}</div><div class="v">${k[1]}</div><div class="n">${esc(k[2])}</div></div>`).join('');
+  const cr=homeFilt(['cat']),groups={};cr.forEach(r=>(groups[r.category]=groups[r.category]||[]).push(r));
+  const list=Object.entries(groups).sort((a,b)=>b[1].length-a[1].length),mx=Math.max(1,...list.map(l=>l[1].length));
+  $('#c-cat').innerHTML=list.map(([k,v])=>{const cc=cnt(v);return `<button type="button" class="row ${S.cat===k?'on':''}" data-cat="${esc(k)}" title="${esc(k)}: ${v.length} issues, ${pct(cc.Resolved,v.length)} resolved"><span class="nm">${esc(k)||'No type'}</span><span class="stack" style="width:${v.length/mx*100}%">${STATUSES.slice().reverse().map(s=>cc[s]?`<span class="${SC[s]}" style="flex:${cc[s]}"></span>`:'').join('')}</span><span class="val">${v.length} · ${pct(v.length,cr.length)}<small>${pct(cc.Resolved,v.length)} resolved</small></span></button>`}).join('')||'<div class="empty">No issues match.</div>';
+  const mr=homeFilt(['month']),mt=months.map(m=>mr.filter(r=>r.month===m)),mm=Math.max(1,...mt.map(a=>a.length));
+  $('#c-month').innerHTML=months.length?`<div class="cols">`+months.map((m,i)=>{const cc=cnt(mt[i]);return `<button type="button" class="col ${S.month===m?'on':''}" data-month="${m}" title="${mLabel(m)}: ${mt[i].length} issues, ${pct(cc.Resolved,mt[i].length)} resolved"><span class="t">${mt[i].length}</span><span class="st" style="height:${mt[i].length/mm*82}%">${STATUSES.slice().reverse().map(s=>cc[s]?`<span class="${SC[s]}" style="flex:${cc[s]}"></span>`:'').join('')}</span></button>`}).join('')+`</div><div class="mlab">`+months.map((m,i)=>`<div>${MN[+m.slice(5,7)-1].slice(0,3)} ${m.slice(0,4)}<br><span style="color:var(--muted)">${pct(cnt(mt[i]).Resolved,mt[i].length)} resolved</span></div>`).join('')+`</div>`:'<div class="empty">No issues yet.</div>';
+  const gr=homeFilt(['group']);
+  const spec=[['Union/Upazila','Union/Upazila',0],['Factory (all)','Factory',0],['BGMEA','BGMEA',1],['BKMEA','BKMEA',1],['FLAXA','FLAXA',1]];
+  const gh=['Group','Total','Resolved','Pending','Processing','Rate'];
+  const grow=spec.map(([lab,sel,sub])=>{const a=gr.filter(r=>matchGroup(r,sel)),cc=cnt(a);return `<tr><td style="${sub?'padding-left:26px':''}"><button type="button" class="btn" style="padding:4px 10px;${S.group===sel?'background:var(--accent-weak)':''}" data-group="${sel}">${lab}</button></td><td class="n">${a.length}</td><td class="n">${cc.Resolved}</td><td class="n">${cc.Pending}</td><td class="n">${cc.Processing}</td><td class="n">${pct(cc.Resolved,a.length)}</td></tr>`}).join('');
+  const tt=cnt(gr);
+  $('#c-group').innerHTML=`<table><thead><tr>${gh.map((h,i)=>`<th class="${i?'n':''}"><span style="display:block;padding:8px 10px">${h}</span></th>`).join('')}</tr></thead><tbody>${grow}<tr style="font-weight:600"><td>All groups</td><td class="n">${gr.length}</td><td class="n">${tt.Resolved}</td><td class="n">${tt.Pending}</td><td class="n">${tt.Processing}</td><td class="n">${pct(tt.Resolved,gr.length)}</td></tr></tbody></table>`;
+  const hr=homeFilt(['cat','group']),hg=['Union/Upazila','BGMEA','BKMEA','FLAXA'];
+  const hm=Math.max(1,...CATS.flatMap(cat=>hg.map(g=>hr.filter(r=>r.category===cat&&matchGroup(r,g)).length)));
+  $('#c-heat').innerHTML=`<table class="heat"><thead><tr><th><span style="display:block;padding:8px 10px">Type</span></th>${hg.map(g=>`<th class="n"><span style="display:block;padding:8px 10px">${g}</span></th>`).join('')}</tr></thead><tbody>${CATS.map(cat=>`<tr><td>${esc(cat)}</td>${hg.map(g=>{const n=hr.filter(r=>r.category===cat&&matchGroup(r,g)).length;const a=n?(0.12+0.7*n/hm):0;return `<td class="c" style="background:color-mix(in srgb,var(--accent) ${(a*100).toFixed(0)}%,transparent);${n/hm>0.55?'color:#fff;':''}">${n||'·'}</td>`}).join('')}</tr>`).join('')}</tbody></table>`;
+  const cols=[{k:'key',l:'Issue'},{k:'date',l:'Date'},{k:'group',l:'Group'},{k:'category',l:'Type'},{k:'status',l:'Status',f:r=>chip(r.status)}];
+  $('#t-count').textContent=A.loaded?`${fmt(total)} of ${fmt(A.issues.length)} issues. Click a row to open it, or a column heading to sort.`:(A.conn==='error'?'Issues could not be loaded.':'Loading issues…');
+  $('#t-home').innerHTML=table(cols,rows,'H',true,emptyIssuesMsg());
+}
+
+function emptyIssuesMsg(){ return !A.loaded ? (A.conn==='error'?'Issues could not be loaded.':'Loading issues…') : null; }
+
+function renderMy(){
+  const q=MY.q.trim().toLowerCase();
+  const myIssues=A.issues.filter(r=>r.createdBy === SESSION.name);
+  const rows=myIssues.filter(r=>(!MY.status||r.status===MY.status)&&(!MY.cat||r.category===MY.cat)&&(!q||[r.key,r.username,r.contact,r.category].join(' ').toLowerCase().includes(q)));
+  $('#my-count').textContent=A.loaded?`${rows.length} of ${myIssues.length} issues created by you (${SESSION.name}).`:(A.conn==='error'?'Issues could not be loaded.':'Loading issues…');
+  const cols=[{k:'key',l:'Issue ID'},{k:'date',l:'Date'},{k:'group',l:'Group'},{k:'username',l:'Username / NID',wrap:1,f:r=>dash(maskId(r.username))},{k:'contact',l:'Contact'},{k:'category',l:'Issue type'},{k:'status',l:'Status',f:r=>chip(r.status)},{k:'resolvedBy',l:'Resolved by'}];
+  const empty=emptyIssuesMsg()||(myIssues.length?'No issues match the filters.':'You have not created any issues yet.');
+  $('#my-table').innerHTML=table(cols,rows,'MY',true,empty);
+  document.querySelectorAll(`[data-add="union"]`).forEach(b=>{b.disabled=!canChange();});
+}
+
+function renderMgmt(id){
+  const ch=id==='upz'?'union':'factory',m=M[id],q=m.q.trim().toLowerCase(),sk=id==='upz'?'U':'F',p=id==='upz'?'u':'f';
+  const all=A.issues.filter(r=>r.channel===ch);
+  const rows=all.filter(r=>(!m.status||r.status===m.status)&&(!m.cat||r.category===m.cat)&&(!m.factory||r.group===m.factory)&&(!q||[r.key,r.username,r.contact,r.category].join(' ').toLowerCase().includes(q)));
+  $('#'+p+'-count').textContent=A.loaded?`${rows.length} of ${all.length} issues. NID values are masked here.`:(A.conn==='error'?'Issues could not be loaded.':'Loading issues…');
+  const base=[{k:'key',l:'Issue ID'},{k:'date',l:'Date'}];
+  const unm={k:'username',l:'Username / NID',wrap:1,f:r=>dash(maskId(r.username))};
+  const cols=id==='upz'
+    ?base.concat([unm,{k:'contact',l:'Email / Number'},{k:'category',l:'Issue type'},{k:'status',l:'Status',f:r=>chip(r.status)},{k:'resolvedBy',l:'Resolved by'}])
+    :base.concat([{k:'group',l:'Factory'},unm,{k:'contact',l:'Number'},{k:'category',l:'Issue type'},{k:'status',l:'Status',f:r=>chip(r.status)},{k:'resolvedBy',l:'Resolved by'}]);
+  const empty=emptyIssuesMsg()||(all.length?'No issues match the filters.':'No issues here yet. Use Add New Issue to log the first one.');
+  $('#'+p+'-table').innerHTML=table(cols,rows,sk,true,empty);
+  document.querySelectorAll(`[data-add="${ch}"]`).forEach(b=>{b.disabled=!canChange();});
+}
+
+function render(){
+  const b=bannerText();const el=$('#banner');el.hidden=!b;el.textContent=b;
+  if(A.page==='home')renderHome();
+  else if(A.page==='my')renderMy();
+  else if(A.page==='upz'||A.page==='fac')renderMgmt(A.page);
+}
+
+function openModal(html,focusId){
+  MOD.last=document.activeElement;$('#modal').innerHTML=html;$('#ov').hidden=false;document.body.classList.add('lock');
+  const t=(focusId&&$('#'+focusId))||$('#modal').querySelector('input:not([readonly]),select,textarea,button');if(t)t.focus();
+}
+function closeModal(silent){
+  if($('#ov').hidden)return;$('#ov').hidden=true;$('#modal').innerHTML='';document.body.classList.remove('lock');MOD.mode='';MOD.key='';
+  if(!silent&&MOD.last&&MOD.last.focus&&document.contains(MOD.last))MOD.last.focus();
+}
+function fmtTime(iso){if(!iso)return '—';const d=new Date(iso);return isNaN(d)?'—':d.toLocaleString('en-GB',{dateStyle:'medium',timeStyle:'short'})}
+
+function viewHtml(r){
+  const fac=r.channel==='factory';
+  const canEdit = canChange() && (SESSION.type === 'admin' || r.createdBy === SESSION.name);
+  
+  const kv=[['Issue ID',r.key],['Date',r.date],['Username / NID',r.username],
+    [fac?'Number':'Email / Number',r.contact],
+    [fac?'Factory':'Union / Upazila',fac?r.group:'Union/Upazila'],
+    ['Issue type',r.category],['Resolved by',r.resolvedBy],
+    ['Details',r.details],['Resolution note',r.resolution],
+    ['Created at',fmtTime(r.createdAt)],['Created by',r.createdBy],
+    ['Updated at',fmtTime(r.updatedAt)],['Updated by',r.updatedBy]];
+    
+  return `<div class="m-head"><div><h2 id="m-title">Issue ${esc(r.key)}</h2><div class="sub-t">${fac?'Factory':'Union / Upazila'} · ${esc(r.date)||'no date'}</div></div><button type="button" class="x" data-close aria-label="Close">×</button></div>
+  <div class="m-body"><div class="sub-t" style="margin:0">Status</div>
+  <div class="seg" role="group" aria-label="Change status">${STATUSES.map(s=>`<button type="button" data-setstatus="${s}" aria-pressed="${r.status===s}" ${canEdit?'':'disabled'}>${SI[s]} ${s}</button>`).join('')}</div>
+  <dl class="kv">${kv.map(([k,v])=>`<dt>${k}</dt><dd>${dash(v)}</dd>`).join('')}</dl></div>
+  <div class="m-foot"><button type="button" class="btn" data-close>Close</button><button type="button" class="btn primary" data-edit ${canEdit?'':'disabled'}>Edit issue</button></div>`;
+}
+function openView(key){const r=issueByKey(key);if(!r)return;MOD.mode='view';MOD.key=key;MOD.ch=r.channel;openModal(viewHtml(r))}
+function field(id,label,inner,req,full,hint){return `<div class="fld${full?' full':''}"><label for="${id}">${label}${req?' <span class="req" aria-hidden="true">*</span>':''}</label>${inner}${hint?`<div class="hint2">${hint}</div>`:''}</div>`}
+const opts=(list,val,ph)=>(ph?`<option value="">${ph}</option>`:'')+list.map(v=>`<option value="${esc(v)}" ${v===val?'selected':''}>${esc(v)}</option>`).join('');
+function formHtml(ch,r,pre){
+  const edit=!!r,v=r||{},fac=ch==='factory',status=(pre&&pre.status)||v.status||'Pending';
+  const title=edit?`Edit issue ${esc(v.key)}`:(fac?'Add Factory issue':'Add Union / Upazila issue');
+  return `<form id="fm" novalidate data-ch="${ch}" data-key="${edit?esc(v.key):''}">
+  <div class="m-head"><div><h2 id="m-title">${title}</h2><div class="sub-t">Fields marked * are required.</div></div><button type="button" class="x" data-close aria-label="Close">×</button></div>
+  <div class="m-body"><div class="grid2">
+   ${field('fm-username','Username / NID','<input type="text" id="fm-username" autocomplete="off" value="'+esc(v.username)+'">',1)}
+   ${field('fm-contact',fac?'Number':'Email / Number','<input type="'+(fac?'tel':'text')+'" id="fm-contact" autocomplete="off" value="'+esc(v.contact)+'">',1)}
+   ${fac?field('fm-factory','Factory','<select id="fm-factory">'+opts(FACTORIES,v.group,'Select factory')+'</select>',1):''}
+   ${field('fm-cat','Issue type','<select id="fm-cat">'+opts(CATS,v.category,'Select issue type')+'</select>',1)}
+   ${field('fm-status','Status','<select id="fm-status">'+opts(STATUSES,status)+'</select>',1)}
+   ${field('fm-resolver','Resolved by','<input type="text" id="fm-resolver" autocomplete="off" value="'+esc(v.resolvedBy)+'">',0,0,'Required when status is Resolved.')}
+   ${field('fm-date','Date','<input type="text" id="fm-date" readonly value="'+esc(edit?v.date:todayStr())+'">',0,0,'Set automatically.')}
+   ${field('fm-details','Details / Description','<textarea id="fm-details">'+esc(v.details)+'</textarea>',1,1)}
+   ${edit?field('fm-resolution','Resolution note','<textarea id="fm-resolution">'+esc(v.resolution)+'</textarea>',0,1):''}
+  </div><p class="err" id="fm-err" role="alert" hidden></p></div>
+  <div class="m-foot"><button type="button" class="btn" data-close>Cancel</button><button type="submit" class="btn primary" id="fm-save">${edit?'Save changes':'Add issue'}</button></div></form>`;
+}
+function openAdd(ch){if(!canChange())return;MOD.mode='add';MOD.key='';MOD.ch=ch;openModal(formHtml(ch,null),'fm-username')}
+function openEdit(key,pre){
+  const r=issueByKey(key);
+  if(!r||!canChange())return;
+  if (SESSION.type !== 'admin' && r.createdBy !== SESSION.name) {
+      toast("You can only edit your own issues");
+      return;
+  }
+  MOD.mode='edit';MOD.key=key;MOD.ch=r.channel;openModal(formHtml(r.channel,r,pre),(pre&&pre.focus)||'fm-username');
+}
+
+function openResetPasswordModal() {
+  const html = `<form id="rp-form" novalidate>
+    <div class="m-head"><div><h2 id="m-title">Reset Password</h2><div class="sub-t">Update your account password</div></div><button type="button" class="x" data-close aria-label="Close">×</button></div>
+    <div class="m-body">
+      <div class="grid2" style="grid-template-columns: 1fr;">
+       ${field('rp-old','Old Password','<input type="password" id="rp-old" autocomplete="current-password">',1)}
+       ${field('rp-email','Email','<input type="email" id="rp-email" autocomplete="email">',1)}
+       ${field('rp-new','New Password','<input type="password" id="rp-new" autocomplete="new-password">',1)}
+       ${field('rp-confirm','Re-type New Password','<input type="password" id="rp-confirm" autocomplete="new-password">',1)}
+      </div>
+      <p class="err" id="rp-err" role="alert" hidden></p>
+    </div>
+    <div class="m-foot"><button type="button" class="btn" data-close>Cancel</button><button type="submit" class="btn primary" id="rp-save">Reset Password</button></div>
+  </form>`;
+  openModal(html, 'rp-old');
+}
+
+async function submitIssueForm(f){
+  const ch=f.dataset.ch,key=f.dataset.key,g=id=>{const e=f.querySelector('#'+id);return e?e.value.trim():''};
+  const rec={username:g('fm-username'),contact:g('fm-contact'),category:g('fm-cat'),status:g('fm-status'),resolvedBy:g('fm-resolver'),details:g('fm-details')};
+  if(ch==='factory')rec.group=g('fm-factory');
+  const need=[['fm-username','Username / NID',rec.username],['fm-contact',ch==='factory'?'Number':'Email / Number',rec.contact]];
+  if(ch==='factory')need.push(['fm-factory','Factory',rec.group]);
+  need.push(['fm-cat','Issue type',rec.category],['fm-details','Details / Description',rec.details]);
+  if(rec.status==='Resolved')need.push(['fm-resolver','Resolved by',rec.resolvedBy]);
+  f.querySelectorAll('[aria-invalid]').forEach(e=>e.removeAttribute('aria-invalid'));
+  const miss=need.filter(n=>!n[2]),err=f.querySelector('#fm-err');
+  if(miss.length){miss.forEach(m=>f.querySelector('#'+m[0]).setAttribute('aria-invalid','true'));err.textContent='Fill in: '+miss.map(m=>m[1]).join(', ')+'.';err.hidden=false;f.querySelector('#'+miss[0][0]).focus();return}
+  err.hidden=true;
+  const btn=f.querySelector('#fm-save'),label=btn.textContent;
+  btn.disabled=true;btn.textContent='Saving…';
+  try{
+    if(key){
+      await api.updateIssue(key,{username:rec.username,contact:rec.contact,category:rec.category,status:rec.status,resolvedBy:rec.resolvedBy,details:rec.details,resolution:g('fm-resolution'),group:ch==='factory'?rec.group:undefined});
+      closeModal(true);MOD.last=null; await refreshData(); toast('Issue '+key+' updated'); openView(key);
+    }else{
+      const res=await api.createIssue(ch,rec);
+      closeModal(true);MOD.last=null; await refreshData(); toast('Issue '+(res.issueId||'')+' added');
+    }
+  }catch(e){
+    err.textContent=friendlyError(e);err.hidden=false;btn.disabled=false;btn.textContent=label;
+    if(e&&e.code==='unauthorized') forceLogout();
+    updateSyncUI();
+  }
+}
+
+async function submitResetPasswordForm(f) {
+  const oldP = f.querySelector('#rp-old').value.trim();
+  const email = f.querySelector('#rp-email').value.trim();
+  const newP = f.querySelector('#rp-new').value;
+  const confP = f.querySelector('#rp-confirm').value;
+  const err = f.querySelector('#rp-err');
+  const btn = f.querySelector('#rp-save');
+  
+  if(newP !== confP) {
+    err.textContent = "New passwords do not match.";
+    err.hidden = false;
+    return;
+  }
+  if(newP.length < 4) {
+    err.textContent = "New password must be at least 4 characters.";
+    err.hidden = false;
+    return;
+  }
+  
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+  err.hidden = true;
+  
+  try {
+    await api.resetPassword({oldPassword: oldP, email: email, newPassword: newP});
+    closeModal();
+    toast('Password updated successfully!');
+  } catch(e) {
+    err.textContent = friendlyError(e);
+    err.hidden = false;
+    btn.disabled = false;
+    btn.textContent = 'Reset Password';
+  }
+}
+
+function friendlyError(e){
+  const c=(e&&e.code)||'';
+  switch(c){
+    case 'unauthorized': return 'Access denied. Please login again.';
+    case 'forbidden': return 'You do not have permission (You can only edit your own issues).';
+    case 'not_configured': return 'The backend is not configured.';
+    case 'not_found': return 'Record not found. Refreshing.';
+    case 'invalid': return e.message||'The server rejected the data.';
+    case 'busy': return 'Server busy. Try again.';
+    case 'network': return 'Cannot reach the server. Check internet.';
+    case 'timeout': return 'Request timed out. Try again.';
+    default: return (e&&e.message)||'The change was not saved.';
+  }
+}
+let toastT;function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),3400)}
+
+async function setStatus(s){
+  const r=issueByKey(MOD.key);
+  if(!r||r.status===s||!canChange())return;
+  if (SESSION.type !== 'admin' && r.createdBy !== SESSION.name) {
+      toast("You can only edit your own issues");
+      return;
+  }
+
+  if(s==='Resolved'&&!r.resolvedBy){openEdit(r.key,{status:'Resolved',focus:'fm-resolver'});return}
+  const seg=$('#modal').querySelector('.seg');
+  if(seg)seg.querySelectorAll('button').forEach(b=>b.disabled=true);
+  try{
+    await api.updateStatus(r.key,s); await refreshData(); toast('Issue '+r.key+' is now '+s);
+    if(MOD.mode==='view'&&MOD.key===r.key)openView(r.key);
+  }catch(e){
+    toast(friendlyError(e));
+    if(seg&&canChange())seg.querySelectorAll('button').forEach(b=>b.disabled=false);
+  }
+}
+
+let refreshTimer=null;
+function updateSyncUI(){
+  const bar=$('#syncbar');if(!bar)return;
+  bar.classList.remove('online','syncing','error');
+  bar.classList.add(A.conn==='online'?'online':A.conn==='error'?'error':'syncing');
+  const label={idle:'Connecting…',syncing:'Syncing…',online:'Connected',error:'Connection error'}[A.conn]||'Connecting…';
+  $('#conn-text').textContent=label+(SESSION?` · ${SESSION.name}`:'');
+  if(A.conn==='error'&&A.err)$('#sync-time').textContent=A.err;
+  else $('#sync-time').textContent=A.lastSync?'Last sync '+A.lastSync.toLocaleTimeString('en-GB'):'';
+  const b=$('#btn-refresh');if(b)b.disabled=A.syncing;
+}
+async function refreshData(opts){
+  opts=opts||{};
+  if(A.syncing || !SESSION)return;
+  A.syncing=true;
+  if(A.conn!=='online')A.conn='syncing';
+  updateSyncUI();
+  try{
+    const issuesRes = await api.getAllIssues();
+    A.issues = (issuesRes.issues||[]).map(d=>norm(d.key||d.issueId,d));
+    A.canWrite=!!issuesRes.canWrite;
+    if (issuesRes.userType) SESSION.type = issuesRes.userType;
+    A.loaded=true;A.err='';A.conn='online';A.lastSync=new Date();
+    if(opts.manual)toast('Synced');
+  }catch(e){
+    A.err=friendlyError(e);A.conn='error';
+    if(!A.loaded){A.issues=[];}
+    if(e && e.code === 'unauthorized') { forceLogout(); return; }
+    if(opts.manual)toast(A.err);
+  }finally{
+    A.syncing=false; render();
+    if(MOD.mode==='view'&&MOD.key&&!$('#ov').hidden){const r=issueByKey(MOD.key);if(r)$('#modal').innerHTML=viewHtml(r)}
+    updateSyncUI();
+  }
+}
+function startAutoRefresh(){
+  stopAutoRefresh();
+  const ms=Math.max(10000,Number(CONFIG.AUTO_REFRESH_INTERVAL)||30000);
+  refreshTimer=setInterval(()=>{if(document.hidden||A.syncing)return;refreshData()},ms);
+}
+function stopAutoRefresh(){if(refreshTimer){clearInterval(refreshTimer);refreshTimer=null}}
+
+function fillAll(){
+  fill('#f-group',GROUPS,'All groups');fill('#f-cat',CATS,'All types');fill('#f-status',STATUSES,'All statuses');
+  fill('#my-status',STATUSES,'All statuses');fill('#my-cat',CATS,'All types');
+  fill('#u-status',STATUSES,'All statuses');fill('#u-cat',CATS,'All types');
+  fill('#fx-fac',FACTORIES,'All factories');fill('#fx-status',STATUSES,'All statuses');fill('#fx-cat',CATS,'All types');
+}
+const bind=(id,obj,key)=>$(id).addEventListener('input',e=>{obj[key]=e.target.value;render()});
+bind('#f-group',S,'group');bind('#f-cat',S,'cat');bind('#f-status',S,'status');bind('#f-month',S,'month');bind('#f-q',S,'q');
+bind('#my-status',MY,'status');bind('#my-cat',MY,'cat');bind('#my-q',MY,'q');
+bind('#u-status',M.upz,'status');bind('#u-cat',M.upz,'cat');bind('#u-q',M.upz,'q');
+bind('#fx-fac',M.fac,'factory');bind('#fx-status',M.fac,'status');bind('#fx-cat',M.fac,'cat');bind('#fx-q',M.fac,'q');
+$('#reset-home').onclick=()=>{Object.assign(S,{group:'',cat:'',status:'',month:'',q:''});$('#f-q').value='';render()};
+$('#reset-my').onclick=()=>{Object.assign(MY,{status:'',cat:'',q:''});['#my-status','#my-cat','#my-q'].forEach(s=>$(s).value='');render()};
+$('#reset-u').onclick=()=>{Object.assign(M.upz,{status:'',cat:'',q:''});['#u-status','#u-cat','#u-q'].forEach(s=>$(s).value='');render()};
+$('#reset-f').onclick=()=>{Object.assign(M.fac,{factory:'',status:'',cat:'',q:''});['#fx-fac','#fx-status','#fx-cat','#fx-q'].forEach(s=>$(s).value='');render()};
+$('#nav-add').onclick=()=>setSub($('#sub-add').hidden);
+$('#menu-btn').onclick=()=>$('#side').classList.contains('open')?closeDrawer():openDrawer();
+$('#scrim').onclick=closeDrawer;
+$('#btn-refresh').onclick=()=>refreshData({manual:true});
+$('#btn-reset-pass').onclick=openResetPasswordModal;
+$('#ov').addEventListener('mousedown',e=>{if(e.target===$('#ov'))closeModal()});
+const tog=(o,k,v)=>{o[k]=o[k]===v?'':v;render()};
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-go],[data-cat],[data-month],[data-group],[data-sort],[data-open],[data-close],[data-add],[data-edit],[data-setstatus]');if(!t)return;
+  const d=t.dataset;
+  if(d.go)go(d.go);
+  else if(d.cat)tog(S,'cat',d.cat);
+  else if(d.month)tog(S,'month',d.month);
+  else if(d.group)tog(S,'group',d.group);
+  else if(d.sort){const [w,k]=d.sort.split(':'),o=SORT[w];SORT[w]=o[0]===k?[k,-o[1]]:[k,(k==='date')?-1:1];render()}
+  else if(d.open)openView(d.open);
+  else if('close' in d)closeModal();
+  else if(d.add)openAdd(d.add);
+  else if('edit' in d)openEdit(MOD.key);
+  else if(d.setstatus)setStatus(d.setstatus);
+});
+document.addEventListener('submit',e=>{ 
+  if(e.target.id==='fm'){e.preventDefault();submitIssueForm(e.target)} 
+  if(e.target.id==='rp-form'){e.preventDefault();submitResetPasswordForm(e.target)}
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){if(!$('#ov').hidden)closeModal();else closeDrawer();return}
+  if((e.key==='Enter'||e.key===' ')&&e.target.matches&&e.target.matches('tr.clk')){e.preventDefault();openView(e.target.dataset.open);return}
+  if(e.key==='Tab'&&!$('#ov').hidden){
+    const f=[...$('#modal').querySelectorAll('button:not(:disabled),input:not([readonly]),select,textarea')];if(!f.length)return;
+    const first=f[0],last=f[f.length-1];
+    if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}
+    else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
+  }
+});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&A.loaded&&!A.syncing&&SESSION)refreshData()});
+
+/* --- LOGIN / LOGOUT / SESSION TIMEOUT LOGIC --- */
+function showLogin(){
+  stopAutoRefresh();
+  SESSION = null;
+  SESSION_EXPIRY = 0;
+  localStorage.removeItem('mcbp_session');
+  localStorage.removeItem('mcbp_expiry');
+  $('#main-app').style.display = 'none';
+  $('#login-screen').style.display = 'flex';
+  $('#login-form').reset();
+  $('#login-error').style.display = 'none';
+  
+  const btn = $('#login-btn');
+  btn.disabled = false;
+  btn.textContent = 'Login';
+
+  $('#login-user').focus();
+}
+
+function forceLogout(){
+  if(!SESSION) return;
+  api.logout().catch(()=>{});
+  showLogin();
+}
+
+$('#login-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const username = $('#login-user').value.trim();
+  const pass = $('#login-pass').value;
+  const btn = $('#login-btn');
+  const errDiv = $('#login-error');
+  
+  btn.disabled = true;
+  btn.textContent = 'Checking...';
+  errDiv.style.display = 'none';
+
+  try {
+    const res = await api.login(username, pass);
+    SESSION = { 
+      token: res.token, 
+      name: res.user.name, 
+      email: res.user.email, 
+      username: res.user.username,
+      type: res.user.type || 'intern'
+    };
+    SESSION_EXPIRY = Date.now() + (res.user.sessionSeconds * 1000);
+    
+    localStorage.setItem('mcbp_session', JSON.stringify(SESSION));
+    localStorage.setItem('mcbp_expiry', SESSION_EXPIRY);
+    
+    $('#login-screen').style.display = 'none';
+    $('#main-app').style.display = 'grid';
+    $('#user-display').textContent = SESSION.name;
+    
+    fillAll();
+    go('home');
+    await refreshData();
+    startAutoRefresh();
+  } catch (err) {
+    errDiv.textContent = friendlyError(err);
+    errDiv.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Login';
+  }
+});
+
+$('#btn-logout').onclick = async () => {
+  if(!confirm("Are you sure you want to logout?")) return;
+  try { await api.logout(); } catch(e) { /* ignore */ }
+  showLogin();
+};
+
+// Check Session Timeout every 10 seconds
+setInterval(() => {
+  if (SESSION && SESSION_EXPIRY > 0 && Date.now() > SESSION_EXPIRY) {
+    alert("Your session has timed out. Please login again.");
+    forceLogout();
+  }
+}, 10000);
+
+/* --- BOOT --- */
+if (SESSION && Date.now() < SESSION_EXPIRY) {
+  $('#login-screen').style.display = 'none';
+  $('#main-app').style.display = 'grid';
+  $('#user-display').textContent = SESSION.name;
+  fillAll();
+  go('home');
+  updateSyncUI();
+  (async function initData(){
+    A.conn='syncing'; updateSyncUI();
+    await refreshData();
+    startAutoRefresh();
+  })();
+} else {
+  showLogin();
+}
+</script>
+
+</body></html>
