@@ -83,7 +83,7 @@ h1{font-size:22px;font-weight:700;margin:0;letter-spacing:-.01em;text-wrap:balan
 @media (min-width:901px){.bar.stick{position:sticky;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:5}}
 .f{display:flex;flex-direction:column;gap:4px;min-width:0;flex:1 1 130px}
 .f label,.fld label{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-select,input[type=search],input[type=text],input[type=tel],input[type=number],input[type=password],input[type=email],textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0;width:100%;transition:border-color 0.2s}
+select,input[type=search],input[type=text],input[type=tel],input[type=number],input[type=password],input[type=email],input[type=date],input[type=month],textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0;width:100%;transition:border-color 0.2s}
 select:focus,input:focus,textarea:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--accent-weak)}
 textarea{resize:vertical;min-height:84px}
 input[readonly]{opacity:.75;background:var(--track)}
@@ -93,6 +93,9 @@ input[readonly]{opacity:.75;background:var(--track)}
 .btn.primary{background:var(--btn);color:var(--btn-ink);border-color:var(--btn);box-shadow:0 2px 4px rgba(31,100,189,0.2)}
 .btn.primary:hover{filter:brightness(1.08);box-shadow:0 4px 8px rgba(31,100,189,0.3)}
 .btn:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
+.btn.green{background:#1a8f4c; color:#fff; border-color:#1a8f4c;}
+.btn.green:hover{background:#157a40;}
+
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:16px}
 .kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0;box-shadow:0 2px 8px rgba(0,0,0,0.03);transition:transform 0.2s,box-shadow 0.2s}
 .kpi:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,0.06)}
@@ -178,6 +181,67 @@ dl.kv dd{margin:0;overflow-wrap:anywhere;white-space:pre-wrap;font-size:14px}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;pointer-events:none;background:var(--ink);color:var(--surface);padding:12px 20px;border-radius:8px;font-weight:600;z-index:50;max-width:calc(100% - 32px);transition:opacity .2s,transform .2s;box-shadow:0 8px 24px rgba(0,0,0,0.2)}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 @media (prefers-reduced-motion:reduce){.toast{transition:none}}
+
+/* Extra CSS for Performance & Reports */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.pchip{display:inline-flex;align-items:center;gap:8px;background:var(--surface);color:var(--ink2);border:1px solid var(--line);border-radius:99px;padding:4px 12px 4px 4px;font-weight:600;cursor:pointer}
+.pchip:hover{background:var(--accent-weak);color:var(--ink)}
+.pchip[aria-pressed=true]{background:var(--accent-weak);color:var(--ink);box-shadow:inset 0 0 0 2px var(--accent)}
+.pchip small{font-family:var(--mono);font-weight:500;color:var(--muted)}
+.av{width:30px;height:30px;border-radius:50%;background:var(--accent-weak);color:var(--ink);display:grid;place-items:center;font-size:12px;font-weight:700;flex:none;border:1px solid var(--line)}
+.av.lg{width:54px;height:54px;font-size:19px}
+.lb{display:flex;flex-direction:column;gap:6px}
+.person{display:grid;grid-template-columns:26px 34px minmax(0,1fr) minmax(80px,34%) 64px;gap:10px;align-items:center;width:100%;text-align:left;color:inherit;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer}
+.person:hover{background:var(--accent-weak)}
+.person.on{background:var(--accent-weak);box-shadow:inset 0 0 0 2px var(--accent)}
+.rk{font-family:var(--mono);font-size:13px;color:var(--muted);text-align:center}
+.person .who{min-width:0}
+.person .who b{display:block;overflow-wrap:anywhere}
+.person .who span{font-size:12px;color:var(--muted)}
+.duo{display:flex;flex-direction:column;gap:4px}
+.duo i{display:block;height:8px;border-radius:0 3px 3px 0;min-width:2px}
+.big{font-family:var(--mono);font-size:22px;font-weight:500;text-align:right;font-variant-numeric:tabular-nums}
+.big small{display:block;font-size:11px;color:var(--muted);font-family:var(--font)}
+@media (max-width:640px){.person{grid-template-columns:22px 32px minmax(0,1fr) 56px}.person .duo{grid-column:1/-1}}
+.prof-head{display:flex;gap:14px;align-items:center;margin-bottom:12px}
+.mini{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:6px}
+.mini>div{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0}
+.mini .l{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.mini .v{font-family:var(--mono);font-size:20px;font-variant-numeric:tabular-nums}
+.sel-h{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:16px 0 6px}
+.row.st{cursor:default}.row.st:hover{background:none}
+.col.st{cursor:default}.col.st:hover{background:none}
+.rlist{display:flex;flex-direction:column;gap:2px}
+.rlist button{display:flex;justify-content:space-between;gap:10px;text-align:left;color:inherit;background:none;border:0;border-radius:6px;padding:6px;cursor:pointer;font-size:13px}
+.rlist button:hover{background:var(--accent-weak)}
+.rlist span{color:var(--muted);font-family:var(--mono);font-size:12px;white-space:nowrap}
+.rtypes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:12px}
+@media (max-width:640px){.rtypes{grid-template-columns:minmax(0,1fr)}}
+.rtype{display:flex;gap:12px;text-align:left;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;cursor:pointer}
+.rtype:hover{background:var(--accent-weak)}
+.rtype[aria-pressed=true]{background:var(--accent-weak);box-shadow:inset 0 0 0 2px var(--accent)}
+.rtype b{display:block;font-size:15px}
+.rtype span{display:block;color:var(--ink2);font-size:13px}
+.rtype svg{flex:none;margin-top:2px}
+.dl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.rhead{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;margin-bottom:10px}
+.chk{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--ink2);margin-bottom:10px}
+.paper{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:16px;min-width:0}
+.paper h3{margin:0;font-size:16px}
+.meta{font-size:12px;color:var(--muted);margin:2px 0 10px;overflow-wrap:anywhere}
+.paper h4{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);margin:18px 0 6px}
+.tfoot td{font-weight:700;border-top:2px solid var(--line)}
+.tag{display:inline-block;font-size:12px;border:1px solid var(--line);border-radius:99px;padding:1px 9px;margin:0 6px 4px 0;color:var(--ink2);background:var(--surface)}
+
+@media print {
+  body { background: #fff; color: #000; padding: 0; }
+  .side, .topbar, .syncbar, .page-head .btn, .bar, .no-print { display: none !important; }
+  .app { display: block; padding: 0; }
+  .main { padding: 0; margin: 0; }
+  .card { border: none; box-shadow: none; padding: 0; }
+  th { background: #eee !important; color: #000 !important; box-shadow: none; }
+  th, td { border: 1px solid #ccc; padding: 6px; font-size: 12px; }
+}
 </style>
 
 <!-- LOGIN SCREEN -->
@@ -225,6 +289,12 @@ dl.kv dd{margin:0;overflow-wrap:anywhere;white-space:pre-wrap;font-size:14px}
         <button type="button" class="nav-sub" data-go="upz">Union / Upazila</button>
         <button type="button" class="nav-sub" data-go="fac">Factory</button>
       </div>
+
+      <button type="button" class="nav-item" data-go="perf">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Performance</button>
+      
+      <button type="button" class="nav-item" data-go="rep">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>Reports</button>
       
       <button type="button" class="nav-item" id="btn-reset-pass">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Reset Password
@@ -245,14 +315,15 @@ dl.kv dd{margin:0;overflow-wrap:anywhere;white-space:pre-wrap;font-size:14px}
       <button class="btn" id="btn-refresh" type="button" title="Reload from Google Sheets">Refresh</button>
     </div>
 
+    <!-- HOME -->
     <section id="p-home">
       <div class="page-head"><div><h1>MCBP Support Dashboard</h1><div class="sub-t">Mother and Child Beneficiary Program · Intern Team</div></div></div>
       <div class="bar stick" role="search" aria-label="Issue filters">
         <div class="f"><label for="f-group">Group</label><select id="f-group"></select></div>
         <div class="f"><label for="f-cat">Issue type</label><select id="f-cat"></select></div>
         <div class="f"><label for="f-status">Status</label><select id="f-status"></select></div>
-        <div class="f"><label for="f-month">Month</label><select id="f-month"></select></div>
-        <div class="f"><label for="f-q">Search by ID</label><input type="search" id="f-q" placeholder="e.g. U-611 or F-70"></div>
+        <div class="f"><label for="f-month-from">From Month</label><input type="month" id="f-month-from"></div>
+        <div class="f"><label for="f-month-to">To Month</label><input type="month" id="f-month-to"></div>
         <button class="btn" id="reset-home" type="button">Reset</button>
       </div>
       <div class="kpis" id="k-home"></div>
@@ -269,6 +340,7 @@ dl.kv dd{margin:0;overflow-wrap:anywhere;white-space:pre-wrap;font-size:14px}
       </div>
     </section>
 
+    <!-- MY ISSUES -->
     <section id="p-my" hidden>
       <div class="page-head"><div><h1>My Issues</h1><div class="sub-t" id="my-count"></div></div><button type="button" class="btn primary" data-add="union">Add New Issue</button></div>
       <div class="bar" role="search" aria-label="My issues filters">
@@ -280,6 +352,7 @@ dl.kv dd{margin:0;overflow-wrap:anywhere;white-space:pre-wrap;font-size:14px}
       <div class="card"><div class="tbl-max scroll" id="my-table"></div></div>
     </section>
 
+    <!-- UNION / UPAZILA -->
     <section id="p-upz" hidden>
       <div class="page-head"><div><h1>Union / Upazila issues</h1><div class="sub-t" id="u-count"></div></div><button type="button" class="btn primary" data-add="union">Add New Issue</button></div>
       <div class="bar" role="search" aria-label="Union and Upazila issue filters">
@@ -291,6 +364,7 @@ dl.kv dd{margin:0;overflow-wrap:anywhere;white-space:pre-wrap;font-size:14px}
       <div class="card"><div class="tbl-max scroll" id="u-table"></div></div>
     </section>
 
+    <!-- FACTORY -->
     <section id="p-fac" hidden>
       <div class="page-head"><div><h1>Factory issues</h1><div class="sub-t" id="f-count"></div></div><button type="button" class="btn primary" data-add="factory">Add New Issue</button></div>
       <div class="bar" role="search" aria-label="Factory issue filters">
@@ -301,6 +375,58 @@ dl.kv dd{margin:0;overflow-wrap:anywhere;white-space:pre-wrap;font-size:14px}
         <button class="btn" id="reset-f" type="button">Reset</button>
       </div>
       <div class="card"><div class="tbl-max scroll" id="f-table"></div></div>
+    </section>
+
+    <!-- PERFORMANCE -->
+    <section id="p-perf" hidden>
+      <div class="page-head"><div><h1>Performance</h1><div class="sub-t">Who resolved and who logged issues, from the Resolved by and Created by names</div></div></div>
+      <div class="bar" role="search" aria-label="Performance filters">
+        <div class="f"><label for="pf-month">Issue month</label><select id="pf-month"></select></div>
+        <div class="f"><label for="pf-group">Group</label><select id="pf-group"></select></div>
+        <div class="f"><label for="pf-cat">Issue type</label><select id="pf-cat"></select></div>
+        <div class="f"><label for="pf-rank">Rank by</label><select id="pf-rank"></select></div>
+        <button class="btn" id="reset-p" type="button">Reset</button>
+      </div>
+      <div class="chips" id="pf-chips" role="group" aria-label="Filter by person"></div>
+      <div class="kpis" id="k-perf"></div>
+      <div class="banner" id="pf-note" hidden></div>
+      <div class="grid">
+        <div class="card"><h2>Leaderboard</h2><p class="hint" id="pf-hint"></p>
+          <div class="legend"><span><i class="dot s1"></i>Issues resolved</span><span><i class="dot s3"></i>Issues logged</span></div>
+          <div class="lb" id="pf-lb"></div></div>
+        <div class="card" id="pf-prof"></div>
+        <div class="card full"><h2>Who resolves what</h2><p class="hint">Issues resolved by each person, split by issue type. Darker cells mean more.</p><div class="scroll" id="pf-heat"></div></div>
+      </div>
+    </section>
+
+    <!-- REPORTS -->
+    <section id="p-rep" hidden>
+      <div class="page-head"><div><h1>Reports</h1><div class="sub-t">Pick a format, narrow it with filters, then download it as PDF, Excel or CSV</div></div></div>
+      <div class="rtypes">
+        <button type="button" class="rtype" data-rtype="summary" aria-pressed="true">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+          <div><b>Summary report</b><span>Issue types with total counts, status split and share of all issues. Also by group and by month.</span></div></button>
+        <button type="button" class="rtype" data-rtype="detailed" aria-pressed="false">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+          <div><b>Detailed report</b><span>One row per issue: ID, date, group, type, status, who logged and resolved it, details and resolution.</span></div></button>
+      </div>
+      <div class="bar" role="search" aria-label="Report filters">
+        <div class="f"><label for="r-group">Group</label><select id="r-group"></select></div>
+        <div class="f"><label for="r-cat">Issue type</label><select id="r-cat"></select></div>
+        <div class="f"><label for="r-status">Status</label><select id="r-status"></select></div>
+        <div class="f"><label for="r-from">From date</label><input type="date" id="r-from"></div>
+        <div class="f"><label for="r-to">To date</label><input type="date" id="r-to"></div>
+        <div class="f"><label for="r-entry">Created by</label><select id="r-entry"></select></div>
+        <div class="f"><label for="r-resolver">Resolved by</label><select id="r-resolver"></select></div>
+        <button class="btn" id="reset-r" type="button">Reset</button>
+      </div>
+      <div class="card">
+        <div class="rhead"><div><h2>Preview</h2><p class="hint" style="margin:0" id="r-count"></p></div>
+          <div class="dl"><button type="button" class="btn primary" data-dl="pdf">Download PDF</button><button type="button" class="btn primary" data-dl="xlsx">Download Excel</button><button type="button" class="btn" data-dl="csv">Download CSV</button></div></div>
+        <label class="chk" id="r-pii-w"><input type="checkbox" id="r-pii"> Include Username / NID and contact in the Detailed report</label>
+        <p class="hint2" id="r-warn" hidden style="margin:0 0 10px"></p>
+        <div class="paper" id="r-prev"></div>
+      </div>
     </section>
   </main>
 </div>
@@ -315,13 +441,13 @@ const CONFIG = {
   REQUEST_TIMEOUT: 25000
 };
 
-const CATS=['OTP / Mobile Number Update','Beneficiary Channel Transfer','Payment / Bank Account Info Update','Password Reset','Beneficiary Status Change','Other (Application, Rename, Activation, Misc.)'];
+const CATS=['OTP / Mobile Number Update','Beneficiary Transfer','Payment / Bank Account Info Update','Password Reset','Beneficiary Status Change','Other (Application, Rename, Activation, Misc.)'];
 const STATUSES=['Pending','Processing','Resolved'];
 const FACTORIES=['BGMEA','BKMEA','FLAXA'];
 const GROUPS=['Union/Upazila','Factory','BGMEA','BKMEA','FLAXA'];
 const SC={Resolved:'s1',Pending:'s2',Processing:'s3'}, SI={Resolved:'✓',Pending:'●',Processing:'↻'};
 const MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
-const PAGES={home:'Home',my:'My Issues',upz:'Union / Upazila issues',fac:'Factory issues'};
+const PAGES={home:'Home',my:'My Issues',upz:'Union / Upazila issues',fac:'Factory issues',perf:'Performance',rep:'Reports'};
 
 const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -368,11 +494,15 @@ const api=(function(){
 })();
 
 const A={page:'home',issues:[],loaded:false,syncing:false,conn:'idle',err:'',lastSync:null,canWrite:false};
-const S={group:'',cat:'',status:'',month:'',q:''};
+const S={group:'',cat:'',status:'',monthFrom:'',monthTo:''};
 const MY={status:'',cat:'',q:''};
 const M={upz:{status:'',cat:'',q:''},fac:{factory:'',status:'',cat:'',q:''}};
 const SORT={H:['date',-1],MY:['date',-1],U:['date',-1],F:['date',-1]};
 const MOD={mode:'',key:'',ch:'',last:null};
+
+/* People & Reports State */
+const P={month:'',group:'',cat:'',rank:'resolved',user:''};
+const R={type:'summary',group:'',cat:'',status:'',from:'',to:'',entry:'',resolver:'',pii:false};
 
 function norm(id,d){
   const ch=d.channel==='factory'||d.channel==='union'?d.channel:(String(id).charAt(0).toUpperCase()==='F'?'factory':'union');
@@ -399,6 +529,8 @@ function table(cols,rows,sortKey,open,emptyMsg){
 function fill(id,vals,all,labels){const el=$(id),cur=el.value;el.innerHTML=(all?`<option value="">${all}</option>`:'')+vals.map(v=>`<option value="${esc(v)}">${esc(labels?labels(v):v)}</option>`).join('');el.value=vals.includes(cur)?cur:''}
 
 const canChange=()=>A.loaded===true&&A.canWrite===true;
+const isAdmin=()=>String(SESSION?.type || '').toLowerCase() === 'admin';
+
 function bannerText(){
   if(A.conn==='error'&&!A.loaded) return 'Cannot load data: '+(A.err||'unknown error');
   if(!A.loaded) return '';
@@ -409,40 +541,52 @@ function bannerText(){
 function setSub(open){const b=$('#nav-add');b.setAttribute('aria-expanded',open);$('#sub-add').hidden=!open}
 function go(p){
   A.page=p;closeModal(true);
-  for(const id of ['home','my','upz','fac'])$('#p-'+id).hidden=id!==p;
+  for(const id of ['home','my','upz','fac','perf','rep'])$('#p-'+id).hidden=id!==p;
   document.querySelectorAll('[data-go]').forEach(b=>b.getAttribute('aria-current')&&b.removeAttribute('aria-current'));
   const cur=document.querySelector(`[data-go="${p}"]`);if(cur)cur.setAttribute('aria-current','page');
   const inAdd=p==='upz'||p==='fac';$('#nav-add').classList.toggle('group-active',inAdd);if(inAdd)setSub(true);
-  $('#top-title').textContent=PAGES[p];closeDrawer();render();window.scrollTo(0,0);
+  $('#top-title').textContent=PAGES[p];
+  if(p==='rep'){loadLibs('pdf').catch(()=>{});loadLibs('xlsx').catch(()=>{})}
+  closeDrawer();render();window.scrollTo(0,0);
 }
 function openDrawer(){$('#side').classList.add('open');$('#scrim').classList.add('show');$('#menu-btn').setAttribute('aria-expanded','true')}
 function closeDrawer(){$('#side').classList.remove('open');$('#scrim').classList.remove('show');$('#menu-btn').setAttribute('aria-expanded','false')}
 
-function homeFilt(skip=[]){const q=S.q.trim().toLowerCase();
-  return A.issues.filter(r=>(skip.includes('group')||matchGroup(r,S.group))&&(skip.includes('cat')||!S.cat||r.category===S.cat)&&(skip.includes('status')||!S.status||r.status===S.status)&&(skip.includes('month')||!S.month||r.month===S.month)&&(!q||r.key.toLowerCase().includes(q)))}
+function homeFilt(skip=[]){
+  return A.issues.filter(r=>
+    (skip.includes('group')||matchGroup(r,S.group)) &&
+    (skip.includes('cat')||!S.cat||r.category===S.cat) &&
+    (skip.includes('status')||!S.status||r.status===S.status) &&
+    (skip.includes('month')||(!S.monthFrom||r.month>=S.monthFrom)&&(!S.monthTo||r.month<=S.monthTo))
+  );
+}
 function renderHome(){
-  const months=[...new Set(A.issues.map(r=>r.month).filter(Boolean))].sort();
-  fill('#f-month',months,'All months',mLabel);
-  if(S.month&&!months.includes(S.month))S.month='';
-  $('#f-group').value=S.group;$('#f-cat').value=S.cat;$('#f-status').value=S.status;$('#f-month').value=S.month;
+  $('#f-group').value=S.group;$('#f-cat').value=S.cat;$('#f-status').value=S.status;
+  $('#f-month-from').value=S.monthFrom;$('#f-month-to').value=S.monthTo;
+  
   const rows=homeFilt(),c=cnt(rows),total=rows.length;
   const top=Object.entries(rows.reduce((m,r)=>(m[r.category]=(m[r.category]||0)+1,m),{})).sort((a,b)=>b[1]-a[1])[0];
   $('#k-home').innerHTML=[['Issues logged',fmt(total),'in the selected filters'],['Resolution rate',total?pct(c.Resolved,total):'—',fmt(c.Resolved)+' resolved'],['Pending',fmt(c.Pending),pct(c.Pending,total)+' of issues'],['Processing',fmt(c.Processing),pct(c.Processing,total)+' of issues'],['Most common type',top?pct(top[1],total):'—',top?top[0]:'No issues']]
     .map(k=>`<div class="kpi"><div class="l">${k[0]}</div><div class="v">${k[1]}</div><div class="n">${esc(k[2])}</div></div>`).join('');
+    
   const cr=homeFilt(['cat']),groups={};cr.forEach(r=>(groups[r.category]=groups[r.category]||[]).push(r));
   const list=Object.entries(groups).sort((a,b)=>b[1].length-a[1].length),mx=Math.max(1,...list.map(l=>l[1].length));
   $('#c-cat').innerHTML=list.map(([k,v])=>{const cc=cnt(v);return `<button type="button" class="row ${S.cat===k?'on':''}" data-cat="${esc(k)}" title="${esc(k)}: ${v.length} issues, ${pct(cc.Resolved,v.length)} resolved"><span class="nm">${esc(k)||'No type'}</span><span class="stack" style="width:${v.length/mx*100}%">${STATUSES.slice().reverse().map(s=>cc[s]?`<span class="${SC[s]}" style="flex:${cc[s]}"></span>`:'').join('')}</span><span class="val">${v.length} · ${pct(v.length,cr.length)}<small>${pct(cc.Resolved,v.length)} resolved</small></span></button>`}).join('')||'<div class="empty">No issues match.</div>';
-  const mr=homeFilt(['month']),mt=months.map(m=>mr.filter(r=>r.month===m)),mm=Math.max(1,...mt.map(a=>a.length));
-  $('#c-month').innerHTML=months.length?`<div class="cols">`+months.map((m,i)=>{const cc=cnt(mt[i]);return `<button type="button" class="col ${S.month===m?'on':''}" data-month="${m}" title="${mLabel(m)}: ${mt[i].length} issues, ${pct(cc.Resolved,mt[i].length)} resolved"><span class="t">${mt[i].length}</span><span class="st" style="height:${mt[i].length/mm*82}%">${STATUSES.slice().reverse().map(s=>cc[s]?`<span class="${SC[s]}" style="flex:${cc[s]}"></span>`:'').join('')}</span></button>`}).join('')+`</div><div class="mlab">`+months.map((m,i)=>`<div>${MN[+m.slice(5,7)-1].slice(0,3)} ${m.slice(0,4)}<br><span style="color:var(--muted)">${pct(cnt(mt[i]).Resolved,mt[i].length)} resolved</span></div>`).join('')+`</div>`:'<div class="empty">No issues yet.</div>';
+  
+  const mr=homeFilt(['month']),months=[...new Set(A.issues.map(r=>r.month).filter(Boolean))].sort(),mt=months.map(m=>mr.filter(r=>r.month===m)),mm=Math.max(1,...mt.map(a=>a.length));
+  $('#c-month').innerHTML=months.length?`<div class="cols">`+months.map((m,i)=>{const cc=cnt(mt[i]);return `<button type="button" class="col ${(S.monthFrom===m&&S.monthTo===m)?'on':''}" data-month="${m}" title="${mLabel(m)}: ${mt[i].length} issues, ${pct(cc.Resolved,mt[i].length)} resolved"><span class="t">${mt[i].length}</span><span class="st" style="height:${mt[i].length/mm*82}%">${STATUSES.slice().reverse().map(s=>cc[s]?`<span class="${SC[s]}" style="flex:${cc[s]}"></span>`:'').join('')}</span></button>`}).join('')+`</div><div class="mlab">`+months.map((m,i)=>`<div>${MN[+m.slice(5,7)-1].slice(0,3)} ${m.slice(0,4)}<br><span style="color:var(--muted)">${pct(cnt(mt[i]).Resolved,mt[i].length)} resolved</span></div>`).join('')+`</div>`:'<div class="empty">No issues yet.</div>';
+  
   const gr=homeFilt(['group']);
   const spec=[['Union/Upazila','Union/Upazila',0],['Factory (all)','Factory',0],['BGMEA','BGMEA',1],['BKMEA','BKMEA',1],['FLAXA','FLAXA',1]];
   const gh=['Group','Total','Resolved','Pending','Processing','Rate'];
   const grow=spec.map(([lab,sel,sub])=>{const a=gr.filter(r=>matchGroup(r,sel)),cc=cnt(a);return `<tr><td style="${sub?'padding-left:26px':''}"><button type="button" class="btn" style="padding:4px 10px;${S.group===sel?'background:var(--accent-weak)':''}" data-group="${sel}">${lab}</button></td><td class="n">${a.length}</td><td class="n">${cc.Resolved}</td><td class="n">${cc.Pending}</td><td class="n">${cc.Processing}</td><td class="n">${pct(cc.Resolved,a.length)}</td></tr>`}).join('');
   const tt=cnt(gr);
   $('#c-group').innerHTML=`<table><thead><tr>${gh.map((h,i)=>`<th class="${i?'n':''}"><span style="display:block;padding:8px 10px">${h}</span></th>`).join('')}</tr></thead><tbody>${grow}<tr style="font-weight:600"><td>All groups</td><td class="n">${gr.length}</td><td class="n">${tt.Resolved}</td><td class="n">${tt.Pending}</td><td class="n">${tt.Processing}</td><td class="n">${pct(tt.Resolved,gr.length)}</td></tr></tbody></table>`;
+  
   const hr=homeFilt(['cat','group']),hg=['Union/Upazila','BGMEA','BKMEA','FLAXA'];
   const hm=Math.max(1,...CATS.flatMap(cat=>hg.map(g=>hr.filter(r=>r.category===cat&&matchGroup(r,g)).length)));
   $('#c-heat').innerHTML=`<table class="heat"><thead><tr><th><span style="display:block;padding:8px 10px">Type</span></th>${hg.map(g=>`<th class="n"><span style="display:block;padding:8px 10px">${g}</span></th>`).join('')}</tr></thead><tbody>${CATS.map(cat=>`<tr><td>${esc(cat)}</td>${hg.map(g=>{const n=hr.filter(r=>r.category===cat&&matchGroup(r,g)).length;const a=n?(0.12+0.7*n/hm):0;return `<td class="c" style="background:color-mix(in srgb,var(--accent) ${(a*100).toFixed(0)}%,transparent);${n/hm>0.55?'color:#fff;':''}">${n||'·'}</td>`}).join('')}</tr>`).join('')}</tbody></table>`;
+  
   const cols=[{k:'key',l:'Issue'},{k:'date',l:'Date'},{k:'group',l:'Group'},{k:'category',l:'Type'},{k:'status',l:'Status',f:r=>chip(r.status)}];
   $('#t-count').textContent=A.loaded?`${fmt(total)} of ${fmt(A.issues.length)} issues. Click a row to open it, or a column heading to sort.`:(A.conn==='error'?'Issues could not be loaded.':'Loading issues…');
   $('#t-home').innerHTML=table(cols,rows,'H',true,emptyIssuesMsg());
@@ -476,13 +620,249 @@ function renderMgmt(id){
   document.querySelectorAll(`[data-add="${ch}"]`).forEach(b=>{b.disabled=!canChange();});
 }
 
+/* ---------- people helpers ---------- */
+const nk=n=>String(n||'').trim().replace(/\s+/g,' ').toLowerCase();
+const cleanName=n=>String(n||'').trim().replace(/\s+/g,' ');
+const initials=n=>n.split(' ').filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join('');
+const SHORT={'OTP / Mobile Number Update':'OTP / mobile','Beneficiary Transfer':'Beneficiary Transfer','Payment / Bank Account Info Update':'Payment info','Password Reset':'Password','Beneficiary Status Change':'Status change','Other (Application, Rename, Activation, Misc.)':'Other'};
+const dayDiff=(a,b)=>Math.max(0,Math.round((Date.parse(b)-Date.parse(a))/864e5));
+function allNames(){const m=new Map();A.issues.forEach(r=>[r.createdBy,r.resolvedBy].forEach(n=>{const k=nk(n);if(k&&!m.has(k))m.set(k,cleanName(n))}));return [...m.entries()].sort((a,b)=>a[1].localeCompare(b[1]))}
+
+/* ---------- PERFORMANCE ---------- */
+function perfRows(){return A.issues.filter(r=>matchGroup(r,P.group)&&(!P.cat||r.category===P.cat)&&(!P.month||r.month===P.month))}
+function perfPeople(rows){
+  const m=new Map(),get=n=>{const k=nk(n);if(!k)return null;if(!m.has(k))m.set(k,{key:k,name:cleanName(n),res:[],ent:[]});return m.get(k)};
+  rows.forEach(r=>{const e=get(r.createdBy);if(e)e.ent.push(r);if(r.status==='Resolved'){const s=get(r.resolvedBy);if(s)s.res.push(r)}});
+  return [...m.values()].map(p=>fin(p));
+}
+function fin(p){
+  const entRes=p.ent.filter(r=>r.status==='Resolved').length;
+  const t=p.res.filter(r=>r.updatedAt&&r.date).map(r=>dayDiff(r.date,r.updatedAt.slice(0,10)));
+  return Object.assign(p,{nRes:p.res.length,nEnt:p.ent.length,rate:p.ent.length?entRes/p.ent.length*100:0,days:t.length?t.reduce((a,b)=>a+b,0)/t.length:null});
+}
+const fmtDays=d=>d==null?'n/a':(d<0.5?'same day':d.toFixed(1)+' days');
+function renderPerf(){
+  const months=[...new Set(A.issues.map(r=>r.month).filter(Boolean))].sort();
+  fill('#pf-month',months,'All months',mLabel);if(P.month&&!months.includes(P.month))P.month='';
+  $('#pf-month').value=P.month;$('#pf-group').value=P.group;$('#pf-cat').value=P.cat;$('#pf-rank').value=P.rank;
+  const rows=perfRows(),ppl=perfPeople(rows),rk={resolved:'nRes',entered:'nEnt',rate:'rate'}[P.rank]||'nRes';
+  ppl.sort((a,b)=>b[rk]-a[rk]||b.nRes-a.nRes||a.name.localeCompare(b.name));
+  const names=allNames();if(P.user&&!names.some(n=>n[0]===P.user))P.user='';
+  const me=P.user?(ppl.find(p=>p.key===P.user)||fin({key:P.user,name:names.find(n=>n[0]===P.user)[1],res:[],ent:[]})):null;
+  const resolvedAll=rows.filter(r=>r.status==='Resolved'),named=ppl.reduce((a,p)=>a+p.nRes,0),unattr=resolvedAll.length-named;
+  const byRes=ppl.slice().sort((a,b)=>b.nRes-a.nRes||a.name.localeCompare(b.name)),pos=me?byRes.findIndex(p=>p.key===me.key)+1:0;
+  const ds=resolvedAll.filter(r=>r.updatedAt&&r.date).map(r=>dayDiff(r.date,r.updatedAt.slice(0,10))),avg=ds.length?ds.reduce((a,b)=>a+b,0)/ds.length:null;
+  
+  const cnt0=Object.fromEntries(ppl.map(p=>[p.key,p.nRes]));
+  $('#pf-chips').innerHTML=`<button type="button" class="pchip" data-user="" aria-pressed="${!P.user}"><span class="av">All</span>Everyone</button>`+names.map(([k,n])=>`<button type="button" class="pchip" data-user="${esc(k)}" aria-pressed="${k===P.user}"><span class="av">${esc(initials(n))}</span>${esc(n)} <small>${cnt0[k]||0}</small></button>`).join('');
+  
+  const K=me?[['Issues resolved',fmt(me.nRes),me.nRes&&named?pct(me.nRes,named)+' of the team\'s named resolutions':'none in the selected filters'],['Issues logged',fmt(me.nEnt),'entered by '+me.name],['Rank by resolved',me.nRes?'#'+pos:'—',me.nRes?'of '+ppl.filter(p=>p.nRes).length+' people who resolved issues':'no resolutions yet'],['Logged and now resolved',me.nEnt?me.rate.toFixed(0)+'%':'—','of the issues they logged']]
+    :[['People',fmt(ppl.length),'logged or resolved an issue'],['Resolved with a name',fmt(named),'of '+fmt(resolvedAll.length)+' resolved issues'],['Top resolver',byRes[0]&&byRes[0].nRes?byRes[0].name:'—',byRes[0]&&byRes[0].nRes?fmt(byRes[0].nRes)+' resolved · '+pct(byRes[0].nRes,named):'no names recorded'],['Average turnaround',avg==null?'—':fmtDays(avg),avg==null?'needs issues resolved in this system':'issue date to resolved, '+ds.length+(ds.length===1?' issue':' issues')]];
+  $('#k-perf').innerHTML=K.map(k=>`<div class="kpi"><div class="l">${k[0]}</div><div class="v" style="${String(k[1]).length>9?'font-size:19px;line-height:1.6':''}">${esc(k[1])}</div><div class="n">${esc(k[2])}</div></div>`).join('');
+  
+  const nt=$('#pf-note');
+  if(!A.loaded){nt.hidden=true}
+  else if(!ppl.length){nt.hidden=false;nt.textContent=A.issues.length?'No names match these filters. Performance is built from the Created by and Resolved by fields.':'No issues yet.'}
+  else if(unattr>0){nt.hidden=false;nt.textContent=fmt(unattr)+' of '+fmt(resolvedAll.length)+' resolved issues in these filters have no Resolved by name, so they are not counted for anyone. Open an issue and add the name to include it.'}
+  else nt.hidden=true;
+  
+  const mxR=Math.max(1,...ppl.map(p=>p.nRes)),mxE=Math.max(1,...ppl.map(p=>p.nEnt));
+  $('#pf-hint').textContent='Ranked by '+({resolved:'issues resolved',entered:'issues logged',rate:'resolution rate of issues logged'}[P.rank])+'. Click a person to open their profile.';
+  $('#pf-lb').innerHTML=ppl.map((p,i)=>`<button type="button" class="person ${p.key===P.user?'on':''}" data-user="${esc(p.key)}" aria-pressed="${p.key===P.user}" title="${esc(p.name)}: ${p.nRes} resolved, ${p.nEnt} logged"><span class="rk">${i+1}</span><span class="av">${esc(initials(p.name))}</span><span class="who"><b>${esc(p.name)}</b><span>${p.nEnt} logged · ${p.nEnt?p.rate.toFixed(0)+'% resolved':'none logged'}</span></span><span class="duo" aria-hidden="true"><i class="s1" style="width:${p.nRes/mxR*100}%"></i><i class="s3" style="width:${p.nEnt/mxE*100}%"></i></span><span class="big">${p.nRes}<small>resolved</small></span></button>`).join('')||`<div class="empty">${A.loaded?'No names to rank.':'Loading issues…'}</div>`;
+  
+  const sub=me?me.res:ppl.flatMap(p=>p.res),title=me?me.name:'Team overview';
+  const bt=CATS.map(c=>[c,sub.filter(r=>r.category===c).length]).filter(x=>x[1]).sort((a,b)=>b[1]-a[1]),bm=Math.max(1,...bt.map(x=>x[1]));
+  const mo=months.map(m=>[m,sub.filter(r=>r.month===m).length]),mm=Math.max(1,...mo.map(x=>x[1]));
+  const mini=me?[['Resolved',me.nRes],['Logged',me.nEnt],['Share of team',me.nRes&&named?pct(me.nRes,named):'—'],['Avg turnaround',fmtDays(me.days)]]:[['Resolved',named],['Logged',ppl.reduce((a,p)=>a+p.nEnt,0)],['People',ppl.length],['Avg turnaround',fmtDays(avg)]];
+  const recent=sub.slice().sort((a,b)=>String(b.date).localeCompare(a.date)||b.key.localeCompare(a.key,undefined,{numeric:true})).slice(0,6);
+  
+  $('#pf-prof').innerHTML=`<div class="prof-head"><span class="av lg">${me?esc(initials(me.name)):'ALL'}</span><div><h2 style="font-size:17px">${esc(title)}</h2><div class="sub-t">${me?(me.nRes?'Rank #'+pos+' by issues resolved':'No resolved issues in these filters'):ppl.length+' people · '+fmt(named)+' resolved issues'}</div></div></div>
+  <div class="mini">${mini.map(m=>`<div><div class="l">${m[0]}</div><div class="v" style="${String(m[1]).length>9?'font-size:15px;line-height:1.9':''}">${esc(m[1])}</div></div>`).join('')}</div>
+  <div class="sel-h">Resolved by issue type</div>${bt.map(([c,n])=>`<div class="row st"><span class="nm">${esc(c)}</span><span class="nest" style="width:${n/bm*100}%"><i style="width:100%"></i></span><span class="val">${n}</span></div>`).join('')||'<div class="empty">Nothing resolved yet.</div>'}
+  <div class="sel-h">Resolved by month</div>${mo.length?`<div class="cols" style="height:130px">${mo.map(([m,n])=>`<div class="col st" title="${mLabel(m)}: ${n}"><span class="t">${n}</span><span class="st" style="height:${n/mm*78}%"><span class="s1" style="flex:1;min-height:${n?3:0}px"></span></span></div>`).join('')}</div><div class="mlab">${mo.map(([m])=>`<div>${MN[+m.slice(5,7)-1].slice(0,3)}</div>`).join('')}</div>`:'<div class="empty">No months yet.</div>'}
+  <div class="sel-h">Latest resolved</div><div class="rlist">${recent.map(r=>`<button type="button" data-open="${esc(r.key)}"><b>${esc(r.key)} · ${esc(SHORT[r.category]||r.category)}</b><span>${esc(r.date)}</span></button>`).join('')||'<div class="empty">None.</div>'}</div>`;
+  
+  const hm=Math.max(1,...ppl.flatMap(p=>CATS.map(c=>p.res.filter(r=>r.category===c).length)));
+  $('#pf-heat').innerHTML=ppl.length?`<table class="heat"><thead><tr><th><span style="display:block;padding:8px 10px">Person</span></th>${CATS.map(c=>`<th class="n"><span style="display:block;padding:8px 10px">${esc(SHORT[c])}</span></th>`).join('')}<th class="n"><span style="display:block;padding:8px 10px">Total</span></th></tr></thead><tbody>${byRes.map(p=>`<tr><td style="${p.key===P.user?'font-weight:700':''}">${esc(p.name)}</td>${CATS.map(c=>{const n=p.res.filter(r=>r.category===c).length,a=n?(0.12+0.7*n/hm):0;return `<td class="c" style="background:color-mix(in srgb,var(--accent) ${(a*100).toFixed(0)}%,transparent);${n/hm>0.55?'color:#fff;':''}">${n||'·'}</td>`}).join('')}<td class="c" style="font-weight:700">${p.nRes}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">No names to show.</div>';
+}
+
+/* ---------- REPORTS ---------- */
+function repRows(){return A.issues.filter(r=>matchGroup(r,R.group)&&(!R.cat||r.category===R.cat)&&(!R.status||r.status===R.status)&&(!R.from||r.date>=R.from)&&(!R.to||r.date<=R.to)&&(!R.entry||nk(r.createdBy)===R.entry)&&(!R.resolver||nk(r.resolvedBy)===R.resolver))
+  .sort((a,b)=>String(a.date).localeCompare(b.date)||a.key.localeCompare(b.key,undefined,{numeric:true}))}
+function buildReport(){
+  const rows=repRows(),n=rows.length,det=R.type==='detailed',nm=Object.fromEntries(allNames()),c=cnt(rows),f=[];
+  if(R.group)f.push('Group: '+(R.group==='Factory'?'Factory (BGMEA, BKMEA, FLAXA)':R.group));
+  if(R.cat)f.push('Issue type: '+R.cat);if(R.status)f.push('Status: '+R.status);
+  if(R.from)f.push('From: '+R.from);if(R.to)f.push('To: '+R.to);
+  if(R.entry)f.push('Created by: '+(nm[R.entry]||R.entry));if(R.resolver)f.push('Resolved by: '+(nm[R.resolver]||R.resolver));
+  const rep={kind:R.type,title:det?'Detailed Issue Report':'Summary Report',sub:'Mother and Child Beneficiary Program - Support issues',filters:f,count:n,generated:new Date().toLocaleString('en-GB',{dateStyle:'medium',timeStyle:'short'}),sections:[]};
+  if(det){
+    const head=['Issue ID','Date','Group','Issue type','Status','Created by','Resolved by'].concat(R.pii?['Username / NID','Contact']:[]).concat(['Details','Resolution']);
+    rep.sections.push({h:'Issues',head,rows:rows.map(r=>[r.key,r.date,r.group,r.category,r.status,r.createdBy,r.resolvedBy].concat(R.pii?[r.username,r.contact]:[]).concat([r.details,r.resolution]))});
+  }else{
+    const H=l=>[l,'Total','Resolved','Processing','Pending','Share of issues','Resolution rate'];
+    const line=(l,a)=>{const cc=cnt(a);return [l,a.length,cc.Resolved,cc.Processing,cc.Pending,n?pct(a.length,n):'-',a.length?pct(cc.Resolved,a.length):'-']};
+    const foot=['Total',n,c.Resolved,c.Processing,c.Pending,n?'100.0%':'-',n?pct(c.Resolved,n):'-'];
+    const types=[...new Set(rows.map(r=>r.category))].map(k=>[k,rows.filter(r=>r.category===k)]).sort((a,b)=>b[1].length-a[1].length);
+    rep.sections.push({h:'Issues by type',head:H('Issue type'),rows:types.map(([k,a])=>line(k||'No type',a)),foot});
+    const gs=['Union/Upazila','BGMEA','BKMEA','FLAXA','Unspecified'].map(g=>[g,rows.filter(r=>r.group===g)]).filter(x=>x[1].length);
+    rep.sections.push({h:'Issues by group',head:H('Group'),rows:gs.map(([g,a])=>line(g,a)),foot});
+    const ms=[...new Set(rows.map(r=>r.month).filter(Boolean))].sort();
+    rep.sections.push({h:'Issues by month',head:H('Month'),rows:ms.map(m=>line(mLabel(m),rows.filter(r=>r.month===m))),foot});
+  }
+  return rep;
+}
+const isNumCol=(rows,i)=>rows.length&&rows.slice(0,5).every(r=>typeof r[i]==='number'||/^\d+(\.\d+)?%$|^-$/.test(String(r[i])));
+function simpleTable(head,rows,foot){
+  const nc=head.map((h,i)=>isNumCol(rows,i));
+  const cell=(v,i,t)=>{const s=String(v==null?'':v);return `<td class="${nc[i]?'n':''}${s.length>34?' wrap':''}">${esc(s)||'<span style="color:var(--muted)">-</span>'}</td>`};
+  return `<div class="scroll"><table><thead><tr>${head.map((h,i)=>`<th class="${nc[i]?'n':''}"><span style="display:block;padding:8px 10px">${esc(h)}</span></th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(cell).join('')}</tr>`).join('')}${foot?`<tr class="tfoot">${foot.map(cell).join('')}</tr>`:''}</tbody></table></div>`;
+}
+function renderRep(){
+  const names=allNames(),nm=Object.fromEntries(names);
+  fill('#r-entry',names.map(n=>n[0]),'Anyone',k=>nm[k]);fill('#r-resolver',names.map(n=>n[0]),'Anyone',k=>nm[k]);
+  $('#r-group').value=R.group;$('#r-cat').value=R.cat;$('#r-status').value=R.status;$('#r-from').value=R.from;$('#r-to').value=R.to;$('#r-entry').value=R.entry;$('#r-resolver').value=R.resolver;
+  if(R.entry&&!nm[R.entry])R.entry='';if(R.resolver&&!nm[R.resolver])R.resolver='';
+  document.querySelectorAll('[data-rtype]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.rtype===R.type)));
+  $('#r-pii-w').hidden=R.type!=='detailed';$('#r-pii').checked=R.pii;
+  const rep=buildReport(),det=rep.kind==='detailed',LIM=60;
+  $('#r-count').textContent=A.loaded?`${fmt(rep.count)} issue${rep.count===1?'':'s'} match the filters.`:'Loading issues…';
+  const tags=rep.filters.map(t=>`<span class="tag">${esc(t)}</span>`).join('')||'<span class="tag">All issues, no filters</span>';
+  $('#r-prev').innerHTML=rep.count?`<h3>${esc(rep.title)}</h3><div class="meta">${esc(rep.sub)} · Generated ${esc(rep.generated)} · ${fmt(rep.count)} issues</div><div>${tags}</div>`
+    +rep.sections.map(s=>`<h4>${esc(s.h)}</h4>`+simpleTable(s.head,s.rows.slice(0,LIM),det?null:s.foot)).join('')
+    +(det&&rep.count>LIM?`<p class="hint2" style="margin:10px 0 0">Showing the first ${LIM} of ${fmt(rep.count)} rows. The downloaded file has all of them.</p>`:''):`<div class="empty">${A.loaded?'No issues match the filters. Widen the filters to build a report.':'Loading issues…'}</div>`;
+  
+  // FIXED: Removed A.dl dependency
+  const ok = rep.count > 0;
+  document.querySelectorAll('[data-dl]').forEach(b=>{
+      b.disabled = !ok || !!RB.busy;
+      b.title = !ok ? 'No issues to export' : '';
+  });
+  
+  const w=$('#r-warn'),nl=rep.sections.some(s=>s.rows.some(r=>r.some(v=>/[^\u0000-ÿ–—‘’“”…€]/.test(String(v==null?'':v))))); // keeping Latin-1 check for PDF
+  w.hidden=!nl;w.textContent=nl?'Some text uses a non-Latin alphabet (for example Bengali). The PDF cannot draw those letters and shows ? instead. Excel and CSV keep the original text.':'';
+}
+
+/* CDN Loaders */
+const RB={busy:false};
+const LIBS={pdf:['https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js','https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js'],xlsx:['https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js']};
+const loadScript=u=>new Promise((ok,no)=>{const s=document.createElement('script');s.src=u;s.onload=ok;s.onerror=()=>no(new Error('load failed'));document.head.appendChild(s)});
+const libP={};
+const loadLibs=k=>libP[k]||(libP[k]=(async()=>{for(const u of LIBS[k])await loadScript(u)})().catch(e=>{delete libP[k];throw e}));
+
+const fname=(rep,ext)=>'MCBP_'+(rep.kind==='detailed'?'Detailed':'Summary')+'_Report_'+todayStr()+'.'+ext;
+
+// NEW: Helper to trigger browser download
+function triggerDownload(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.style.display = 'none';
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function csvCell(v){let s=v==null?'':String(v);if(/^[=+\-@\t\r]/.test(s)&&isNaN(Number(s)))s="'"+s;return /[",\n\r]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s}
+function toCsv(rep){
+  const L=[];
+  if(rep.kind==='detailed'){const s=rep.sections[0];L.push(s.head);s.rows.forEach(r=>L.push(r))}
+  else{L.push([rep.title]);L.push(['Generated',rep.generated]);L.push(['Filters',rep.filters.join('; ')||'none (all issues)']);rep.sections.forEach(s=>{L.push([]);L.push([s.h]);L.push(s.head);s.rows.forEach(r=>L.push(r));if(s.foot)L.push(s.foot)})}
+  return '﻿'+L.map(r=>r.map(csvCell).join(',')).join('\r\n');
+}
+async function toXlsx(rep){
+  await loadLibs('xlsx');
+  const wb=new ExcelJS.Workbook();wb.creator='MCBP Support Desk';wb.created=new Date();
+  const hdr=row=>row.eachCell(c=>{c.font={bold:true,color:{argb:'FFFFFFFF'}};c.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF1F64BD'}};c.alignment={vertical:'middle',wrapText:true}});
+  if(rep.kind==='detailed'){
+    const s=rep.sections[0],ws=wb.addWorksheet('Issues',{views:[{state:'frozen',ySplit:1}]});
+    ws.addRow(s.head);hdr(ws.getRow(1));s.rows.forEach(r=>ws.addRow(r));
+    ws.columns.forEach((c,i)=>{c.width=Math.min(60,Math.max(10,...[s.head[i]].concat(s.rows.slice(0,300).map(r=>r[i])).map(v=>String(v==null?'':v).length+2)))});
+    ws.autoFilter={from:{row:1,column:1},to:{row:1,column:s.head.length}};
+    const wrapIdx=['Details','Resolution'].map(h=>s.head.indexOf(h)).filter(i=>i>=0);
+    ws.eachRow((row,n)=>{if(n>1)wrapIdx.forEach(i=>{row.getCell(i+1).alignment={wrapText:true,vertical:'top'}})});
+    const info=wb.addWorksheet('Report info');info.columns=[{width:16},{width:70}];
+    [['Report',rep.title],['Programme','Mother and Child Beneficiary Program'],['Generated',rep.generated],['Issues',rep.count],['Filters',rep.filters.join('; ')||'none (all issues)']].forEach(r=>info.addRow(r));info.getColumn(1).font={bold:true};
+  }else{
+    const ws=wb.addWorksheet('Summary');ws.columns=[{width:46},{width:12},{width:12},{width:12},{width:12},{width:16},{width:16}];
+    ws.addRow([rep.title]).font={bold:true,size:16};ws.addRow([rep.sub]);ws.addRow(['Generated',rep.generated]);ws.addRow(['Issues',rep.count]);ws.addRow(['Filters',rep.filters.join('; ')||'none (all issues)']);
+    rep.sections.forEach(s=>{
+      ws.addRow([]);ws.addRow([s.h]).font={bold:true,size:12};hdr(ws.addRow(s.head));
+      s.rows.forEach(r=>ws.addRow(r));
+      if(s.foot){const f=ws.addRow(s.foot);f.font={bold:true};f.eachCell(c=>{c.border={top:{style:'thin'}}})}
+    });
+    ws.eachRow(row=>row.eachCell((c,i)=>{if(i>1&&(typeof c.value==='number'||/^\d+(\.\d+)?%$/.test(String(c.value))))c.alignment={horizontal:'right'}}));
+  }
+  return new Blob([await wb.xlsx.writeBuffer()],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+}
+const L1=v=>String(v==null?'':v).replace(/[–—]/g,'-').replace(/[‘’]/g,"'").replace(/[“”]/g,'"').replace(/…/g,'...').replace(/[^\u0000-ÿ]/g,'?');
+async function toPdf(rep){
+  await loadLibs('pdf');
+  const {jsPDF}=window.jspdf,det=rep.kind==='detailed';
+  const doc=new jsPDF({orientation:det?'landscape':'portrait',unit:'pt',format:'a4'}),W=doc.internal.pageSize.getWidth(),H=doc.internal.pageSize.getHeight(),M=36;
+  doc.setFillColor(31,100,189);doc.rect(0,0,W,66,'F');doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(18);doc.text(L1(rep.title),M,30);
+  doc.setFont('helvetica','normal');doc.setFontSize(10);doc.text(L1(rep.sub),M,50);
+  doc.setTextColor(40,40,40);doc.setFontSize(9);
+  let y=86;
+  ['Generated: '+rep.generated,'Issues in this report: '+rep.count,'Filters: '+(rep.filters.join('; ')||'none (all issues)')].forEach(t=>{const ln=doc.splitTextToSize(L1(t),W-2*M);doc.text(ln,M,y);y+=ln.length*12});
+  y+=8;
+  rep.sections.forEach(s=>{
+    if(y>H-110){doc.addPage();y=M+6}
+    doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(31,100,189);doc.text(L1(s.h),M,y);
+    const cs={};s.head.forEach((h,i)=>{if(isNumCol(s.rows,i))cs[i]={halign:'right'};if(det&&(h==='Details'||h==='Resolution'))cs[i]={cellWidth:130}});
+    doc.autoTable({startY:y+6,head:[s.head.map(L1)],body:s.rows.map(r=>r.map(L1)),foot:s.foot?[s.foot.map(L1)]:undefined,showFoot:'lastPage',theme:'striped',margin:{left:M,right:M,bottom:40},styles:{fontSize:8,cellPadding:4,overflow:'linebreak',textColor:[30,30,30]},headStyles:{fillColor:[31,100,189],textColor:255},footStyles:{fillColor:[225,232,242],textColor:20,fontStyle:'bold'},columnStyles:cs,didParseCell:h=>{if(h.section==='foot'&&cs[h.column.index]&&cs[h.column.index].halign)h.cell.styles.halign='right'}});
+    y=doc.lastAutoTable.finalY+24;
+  });
+  const n=doc.getNumberOfPages();
+  for(let i=1;i<=n;i++){doc.setPage(i);doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(110,110,110);doc.text('MCBP Support Desk  |  Page '+i+' of '+n,M,H-18)}
+  return doc.output('blob');
+}
+
+// FIXED: Replaced A.dl.save() with standard browser download
+async function doDownload(kind){
+  if(RB.busy)return;
+  const rep=buildReport();
+  if(!rep.count)return;
+  
+  RB.busy=true;
+  renderRep();
+  toast('Preparing the '+({xlsx:'Excel',pdf:'PDF',csv:'CSV'}[kind])+' file…');
+  
+  try{
+    const filename = fname(rep, kind);
+    if(kind === 'csv') {
+      const csvData = toCsv(rep);
+      const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+      triggerDownload(blob, filename);
+    } else if (kind === 'xlsx') {
+      const blob = await toXlsx(rep);
+      triggerDownload(blob, filename);
+    } else if (kind === 'pdf') {
+      const blob = await toPdf(rep);
+      triggerDownload(blob, filename);
+    }
+    toast('Downloaded ' + filename);
+  } catch(e) {
+    console.error(e);
+    toast('The file could not be built. Check your internet connection.');
+  } finally {
+    RB.busy=false;
+    renderRep();
+  }
+}
+
 function render(){
   const b=bannerText();const el=$('#banner');el.hidden=!b;el.textContent=b;
   if(A.page==='home')renderHome();
   else if(A.page==='my')renderMy();
   else if(A.page==='upz'||A.page==='fac')renderMgmt(A.page);
+  else if(A.page==='perf')renderPerf();
+  else if(A.page==='rep')renderRep();
 }
 
+/* --- MODALS & FORMS --- */
 function openModal(html,focusId){
   MOD.last=document.activeElement;$('#modal').innerHTML=html;$('#ov').hidden=false;document.body.classList.add('lock');
   const t=(focusId&&$('#'+focusId))||$('#modal').querySelector('input:not([readonly]),select,textarea,button');if(t)t.focus();
@@ -495,7 +875,7 @@ function fmtTime(iso){if(!iso)return '—';const d=new Date(iso);return isNaN(d)
 
 function viewHtml(r){
   const fac=r.channel==='factory';
-  const canEdit = canChange() && (SESSION.type === 'admin' || r.createdBy === SESSION.name);
+  const canEdit = canChange() && (isAdmin() || r.createdBy === SESSION.name);
   
   const kv=[['Issue ID',r.key],['Date',r.date],['Username / NID',r.username],
     [fac?'Number':'Email / Number',r.contact],
@@ -517,11 +897,15 @@ const opts=(list,val,ph)=>(ph?`<option value="">${ph}</option>`:'')+list.map(v=>
 function formHtml(ch,r,pre){
   const edit=!!r,v=r||{},fac=ch==='factory',status=(pre&&pre.status)||v.status||'Pending';
   const title=edit?`Edit issue ${esc(v.key)}`:(fac?'Add Factory issue':'Add Union / Upazila issue');
+  
+  const unameLabel = fac ? 'Factory ID / Beneficiary NID' : 'Officer UserID / Beneficiary NID';
+  const contactLabel = fac ? 'Welfare Officer Number' : 'Email / Number';
+
   return `<form id="fm" novalidate data-ch="${ch}" data-key="${edit?esc(v.key):''}">
   <div class="m-head"><div><h2 id="m-title">${title}</h2><div class="sub-t">Fields marked * are required.</div></div><button type="button" class="x" data-close aria-label="Close">×</button></div>
   <div class="m-body"><div class="grid2">
-   ${field('fm-username','Username / NID','<input type="text" id="fm-username" autocomplete="off" value="'+esc(v.username)+'">',1)}
-   ${field('fm-contact',fac?'Number':'Email / Number','<input type="'+(fac?'tel':'text')+'" id="fm-contact" autocomplete="off" value="'+esc(v.contact)+'">',1)}
+   ${field('fm-username',unameLabel,'<input type="text" id="fm-username" autocomplete="off" value="'+esc(v.username)+'">',1)}
+   ${field('fm-contact',contactLabel,'<input type="'+(fac?'tel':'text')+'" id="fm-contact" autocomplete="off" value="'+esc(v.contact)+'">',1)}
    ${fac?field('fm-factory','Factory','<select id="fm-factory">'+opts(FACTORIES,v.group,'Select factory')+'</select>',1):''}
    ${field('fm-cat','Issue type','<select id="fm-cat">'+opts(CATS,v.category,'Select issue type')+'</select>',1)}
    ${field('fm-status','Status','<select id="fm-status">'+opts(STATUSES,status)+'</select>',1)}
@@ -536,7 +920,7 @@ function openAdd(ch){if(!canChange())return;MOD.mode='add';MOD.key='';MOD.ch=ch;
 function openEdit(key,pre){
   const r=issueByKey(key);
   if(!r||!canChange())return;
-  if (SESSION.type !== 'admin' && r.createdBy !== SESSION.name) {
+  if (!isAdmin() && r.createdBy !== SESSION.name) {
       toast("You can only edit your own issues");
       return;
   }
@@ -564,7 +948,7 @@ async function submitIssueForm(f){
   const ch=f.dataset.ch,key=f.dataset.key,g=id=>{const e=f.querySelector('#'+id);return e?e.value.trim():''};
   const rec={username:g('fm-username'),contact:g('fm-contact'),category:g('fm-cat'),status:g('fm-status'),resolvedBy:g('fm-resolver'),details:g('fm-details')};
   if(ch==='factory')rec.group=g('fm-factory');
-  const need=[['fm-username','Username / NID',rec.username],['fm-contact',ch==='factory'?'Number':'Email / Number',rec.contact]];
+  const need=[['fm-username',ch==='factory'?'Factory ID / Beneficiary NID':'Officer UserID / Beneficiary NID',rec.username],['fm-contact',ch==='factory'?'Welfare Officer Number':'Email / Number',rec.contact]];
   if(ch==='factory')need.push(['fm-factory','Factory',rec.group]);
   need.push(['fm-cat','Issue type',rec.category],['fm-details','Details / Description',rec.details]);
   if(rec.status==='Resolved')need.push(['fm-resolver','Resolved by',rec.resolvedBy]);
@@ -643,7 +1027,7 @@ let toastT;function toast(msg){const t=$('#toast');t.textContent=msg;t.classList
 async function setStatus(s){
   const r=issueByKey(MOD.key);
   if(!r||r.status===s||!canChange())return;
-  if (SESSION.type !== 'admin' && r.createdBy !== SESSION.name) {
+  if (!isAdmin() && r.createdBy !== SESSION.name) {
       toast("You can only edit your own issues");
       return;
   }
@@ -681,7 +1065,10 @@ async function refreshData(opts){
     const issuesRes = await api.getAllIssues();
     A.issues = (issuesRes.issues||[]).map(d=>norm(d.key||d.issueId,d));
     A.canWrite=!!issuesRes.canWrite;
-    if (issuesRes.userType) SESSION.type = issuesRes.userType;
+    if (issuesRes.userType) {
+      SESSION.type = issuesRes.userType;
+      localStorage.setItem('mcbp_session', JSON.stringify(SESSION));
+    }
     A.loaded=true;A.err='';A.conn='online';A.lastSync=new Date();
     if(opts.manual)toast('Synced');
   }catch(e){
@@ -707,29 +1094,47 @@ function fillAll(){
   fill('#my-status',STATUSES,'All statuses');fill('#my-cat',CATS,'All types');
   fill('#u-status',STATUSES,'All statuses');fill('#u-cat',CATS,'All types');
   fill('#fx-fac',FACTORIES,'All factories');fill('#fx-status',STATUSES,'All statuses');fill('#fx-cat',CATS,'All types');
+  
+  fill('#pf-group',GROUPS,'All groups');fill('#pf-cat',CATS,'All types');fill('#pf-rank',['resolved','entered','rate'],'',v=>({resolved:'Issues resolved',entered:'Issues logged',rate:'Resolution rate of logged'}[v]));
+  fill('#r-group',GROUPS,'All groups');fill('#r-cat',CATS,'All types');fill('#r-status',STATUSES,'All statuses');
 }
 const bind=(id,obj,key)=>$(id).addEventListener('input',e=>{obj[key]=e.target.value;render()});
-bind('#f-group',S,'group');bind('#f-cat',S,'cat');bind('#f-status',S,'status');bind('#f-month',S,'month');bind('#f-q',S,'q');
+bind('#f-group',S,'group');bind('#f-cat',S,'cat');bind('#f-status',S,'status');bind('#f-month-from',S,'monthFrom');bind('#f-month-to',S,'monthTo');
 bind('#my-status',MY,'status');bind('#my-cat',MY,'cat');bind('#my-q',MY,'q');
 bind('#u-status',M.upz,'status');bind('#u-cat',M.upz,'cat');bind('#u-q',M.upz,'q');
 bind('#fx-fac',M.fac,'factory');bind('#fx-status',M.fac,'status');bind('#fx-cat',M.fac,'cat');bind('#fx-q',M.fac,'q');
-$('#reset-home').onclick=()=>{Object.assign(S,{group:'',cat:'',status:'',month:'',q:''});$('#f-q').value='';render()};
+bind('#pf-month',P,'month');bind('#pf-group',P,'group');bind('#pf-cat',P,'cat');bind('#pf-rank',P,'rank');
+bind('#r-group',R,'group');bind('#r-cat',R,'cat');bind('#r-status',R,'status');bind('#r-from',R,'from');bind('#r-to',R,'to');bind('#r-entry',R,'entry');bind('#r-resolver',R,'resolver');
+$('#r-pii').addEventListener('change',e=>{R.pii=e.target.checked;render()});
+
+$('#reset-home').onclick=()=>{Object.assign(S,{group:'',cat:'',status:'',monthFrom:'',monthTo:''});$('#f-month-from').value='';$('#f-month-to').value='';render()};
 $('#reset-my').onclick=()=>{Object.assign(MY,{status:'',cat:'',q:''});['#my-status','#my-cat','#my-q'].forEach(s=>$(s).value='');render()};
 $('#reset-u').onclick=()=>{Object.assign(M.upz,{status:'',cat:'',q:''});['#u-status','#u-cat','#u-q'].forEach(s=>$(s).value='');render()};
 $('#reset-f').onclick=()=>{Object.assign(M.fac,{factory:'',status:'',cat:'',q:''});['#fx-fac','#fx-status','#fx-cat','#fx-q'].forEach(s=>$(s).value='');render()};
+$('#reset-p').onclick=()=>{Object.assign(P,{month:'',group:'',cat:'',rank:'resolved',user:''});render()};
+$('#reset-r').onclick=()=>{Object.assign(R,{group:'',cat:'',status:'',from:'',to:'',entry:'',resolver:''});render()};
+
 $('#nav-add').onclick=()=>setSub($('#sub-add').hidden);
 $('#menu-btn').onclick=()=>$('#side').classList.contains('open')?closeDrawer():openDrawer();
 $('#scrim').onclick=closeDrawer;
 $('#btn-refresh').onclick=()=>refreshData({manual:true});
 $('#btn-reset-pass').onclick=openResetPasswordModal;
+
 $('#ov').addEventListener('mousedown',e=>{if(e.target===$('#ov'))closeModal()});
 const tog=(o,k,v)=>{o[k]=o[k]===v?'':v;render()};
 document.addEventListener('click',e=>{
-  const t=e.target.closest('[data-go],[data-cat],[data-month],[data-group],[data-sort],[data-open],[data-close],[data-add],[data-edit],[data-setstatus]');if(!t)return;
+  const t=e.target.closest('[data-go],[data-cat],[data-month],[data-group],[data-sort],[data-open],[data-close],[data-add],[data-edit],[data-setstatus],[data-user],[data-rtype],[data-dl]');if(!t)return;
   const d=t.dataset;
   if(d.go)go(d.go);
   else if(d.cat)tog(S,'cat',d.cat);
-  else if(d.month)tog(S,'month',d.month);
+  else if(d.month){
+    if(S.monthFrom===d.month && S.monthTo===d.month){
+       S.monthFrom=''; S.monthTo='';
+    } else {
+       S.monthFrom=d.month; S.monthTo=d.month;
+    }
+    render();
+  }
   else if(d.group)tog(S,'group',d.group);
   else if(d.sort){const [w,k]=d.sort.split(':'),o=SORT[w];SORT[w]=o[0]===k?[k,-o[1]]:[k,(k==='date')?-1:1];render()}
   else if(d.open)openView(d.open);
@@ -737,6 +1142,9 @@ document.addEventListener('click',e=>{
   else if(d.add)openAdd(d.add);
   else if('edit' in d)openEdit(MOD.key);
   else if(d.setstatus)setStatus(d.setstatus);
+  else if('user' in d){P.user=P.user===d.user?'':d.user;render()}
+  else if(d.rtype){R.type=d.rtype;render()}
+  else if(d.dl)doDownload(d.dl);
 });
 document.addEventListener('submit',e=>{ 
   if(e.target.id==='fm'){e.preventDefault();submitIssueForm(e.target)} 
