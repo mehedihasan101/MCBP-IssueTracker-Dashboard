@@ -342,7 +342,7 @@ dl.kv dd{margin:0;overflow-wrap:anywhere;white-space:pre-wrap;font-size:14px}
 
     <!-- MY ISSUES -->
     <section id="p-my" hidden>
-      <div class="page-head"><div><h1>My Issues</h1><div class="sub-t" id="my-count"></div></div><button type="button" class="btn primary" data-add="union">Add New Issue</button></div>
+      <div class="page-head"><div><h1>My Issues</h1><div class="sub-t" id="my-count"></div></div></div>
       <div class="bar" role="search" aria-label="My issues filters">
         <div class="f"><label for="my-status">Status</label><select id="my-status"></select></div>
         <div class="f"><label for="my-cat">Issue type</label><select id="my-cat"></select></div>
@@ -381,10 +381,11 @@ dl.kv dd{margin:0;overflow-wrap:anywhere;white-space:pre-wrap;font-size:14px}
     <section id="p-perf" hidden>
       <div class="page-head"><div><h1>Performance</h1><div class="sub-t">Who resolved and who logged issues, from the Resolved by and Created by names</div></div></div>
       <div class="bar" role="search" aria-label="Performance filters">
-        <div class="f"><label for="pf-month">Issue month</label><select id="pf-month"></select></div>
+        <div class="f"><label for="pf-month-from">From Month</label><input type="month" id="pf-month-from"></div>
+        <div class="f"><label for="pf-month-to">To Month</label><input type="month" id="pf-month-to"></div>
         <div class="f"><label for="pf-group">Group</label><select id="pf-group"></select></div>
         <div class="f"><label for="pf-cat">Issue type</label><select id="pf-cat"></select></div>
-        <div class="f"><label for="pf-rank">Rank by</label><select id="pf-rank"></select></div>
+        <div class="f"><label for="pf-search">Search by Name</label><input type="search" id="pf-search" placeholder="Type a name..."></div>
         <button class="btn" id="reset-p" type="button">Reset</button>
       </div>
       <div class="chips" id="pf-chips" role="group" aria-label="Filter by person"></div>
@@ -436,7 +437,7 @@ dl.kv dd{margin:0;overflow-wrap:anywhere;white-space:pre-wrap;font-size:14px}
 
 <script>
 const CONFIG = {
-  API_URL: "https://script.google.com/macros/s/AKfycbwR7zULY-Q3CALga6Y1XS7uyWV6ZU0VGRoSzMQRbpDuXKkeYvSO90TJI6HP9rlVHu8Y/exec",
+  API_URL: "https://script.google.com/macros/s/AKfycbwfmtx0GlRt5QwiwlbyVdJ3T1T8EQ3vc9FRtKfIKj_B84AxUrjjEA648mnTBCCUdGIf/exec",
   AUTO_REFRESH_INTERVAL: 30000,
   REQUEST_TIMEOUT: 25000
 };
@@ -493,7 +494,7 @@ const api=(function(){
   };
 })();
 
-const A={page:'home',issues:[],loaded:false,syncing:false,conn:'idle',err:'',lastSync:null,canWrite:false};
+const A={page:'home',issues:[],users:[],loaded:false,syncing:false,conn:'idle',err:'',lastSync:null,canWrite:false};
 const S={group:'',cat:'',status:'',monthFrom:'',monthTo:''};
 const MY={status:'',cat:'',q:''};
 const M={upz:{status:'',cat:'',q:''},fac:{factory:'',status:'',cat:'',q:''}};
@@ -501,7 +502,7 @@ const SORT={H:['date',-1],MY:['date',-1],U:['date',-1],F:['date',-1]};
 const MOD={mode:'',key:'',ch:'',last:null};
 
 /* People & Reports State */
-const P={month:'',group:'',cat:'',rank:'resolved',user:''};
+const P={monthFrom:'',monthTo:'',group:'',cat:'',search:'',user:''};
 const R={type:'summary',group:'',cat:'',status:'',from:'',to:'',entry:'',resolver:'',pii:false};
 
 function norm(id,d){
@@ -602,7 +603,6 @@ function renderMy(){
   const cols=[{k:'key',l:'Issue ID'},{k:'date',l:'Date'},{k:'group',l:'Group'},{k:'username',l:'Username / NID',wrap:1,f:r=>dash(maskId(r.username))},{k:'contact',l:'Contact'},{k:'category',l:'Issue type'},{k:'status',l:'Status',f:r=>chip(r.status)},{k:'resolvedBy',l:'Resolved by'}];
   const empty=emptyIssuesMsg()||(myIssues.length?'No issues match the filters.':'You have not created any issues yet.');
   $('#my-table').innerHTML=table(cols,rows,'MY',true,empty);
-  document.querySelectorAll(`[data-add="union"]`).forEach(b=>{b.disabled=!canChange();});
 }
 
 function renderMgmt(id){
@@ -626,14 +626,29 @@ const cleanName=n=>String(n||'').trim().replace(/\s+/g,' ');
 const initials=n=>n.split(' ').filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join('');
 const SHORT={'OTP / Mobile Number Update':'OTP / mobile','Beneficiary Transfer':'Beneficiary Transfer','Payment / Bank Account Info Update':'Payment info','Password Reset':'Password','Beneficiary Status Change':'Status change','Other (Application, Rename, Activation, Misc.)':'Other'};
 const dayDiff=(a,b)=>Math.max(0,Math.round((Date.parse(b)-Date.parse(a))/864e5));
-function allNames(){const m=new Map();A.issues.forEach(r=>[r.createdBy,r.resolvedBy].forEach(n=>{const k=nk(n);if(k&&!m.has(k))m.set(k,cleanName(n))}));return [...m.entries()].sort((a,b)=>a[1].localeCompare(b[1]))}
+
+// FIXED: Added missing allNames function
+function allNames(){
+  const m=new Map();
+  A.issues.forEach(r=>[r.createdBy,r.resolvedBy].forEach(n=>{
+    const k=nk(n);
+    if(k&&!m.has(k))m.set(k,cleanName(n))
+  }));
+  return [...m.entries()].sort((a,b)=>a[1].localeCompare(b[1]));
+}
 
 /* ---------- PERFORMANCE ---------- */
-function perfRows(){return A.issues.filter(r=>matchGroup(r,P.group)&&(!P.cat||r.category===P.cat)&&(!P.month||r.month===P.month))}
+function perfRows(){
+  return A.issues.filter(r=>matchGroup(r,P.group) && (!P.cat||r.category===P.cat) && (!P.monthFrom||r.month>=P.monthFrom) && (!P.monthTo||r.month<=P.monthTo));
+}
 function perfPeople(rows){
   const m=new Map(),get=n=>{const k=nk(n);if(!k)return null;if(!m.has(k))m.set(k,{key:k,name:cleanName(n),res:[],ent:[]});return m.get(k)};
   rows.forEach(r=>{const e=get(r.createdBy);if(e)e.ent.push(r);if(r.status==='Resolved'){const s=get(r.resolvedBy);if(s)s.res.push(r)}});
-  return [...m.values()].map(p=>fin(p));
+  return [...m.values()].map(p=>{
+    const user = A.users.find(u => nk(u.name) === p.key);
+    p.working = user ? user.working : 'no';
+    return fin(p);
+  });
 }
 function fin(p){
   const entRes=p.ent.filter(r=>r.status==='Resolved').length;
@@ -641,20 +656,33 @@ function fin(p){
   return Object.assign(p,{nRes:p.res.length,nEnt:p.ent.length,rate:p.ent.length?entRes/p.ent.length*100:0,days:t.length?t.reduce((a,b)=>a+b,0)/t.length:null});
 }
 const fmtDays=d=>d==null?'n/a':(d<0.5?'same day':d.toFixed(1)+' days');
+
 function renderPerf(){
-  const months=[...new Set(A.issues.map(r=>r.month).filter(Boolean))].sort();
-  fill('#pf-month',months,'All months',mLabel);if(P.month&&!months.includes(P.month))P.month='';
-  $('#pf-month').value=P.month;$('#pf-group').value=P.group;$('#pf-cat').value=P.cat;$('#pf-rank').value=P.rank;
-  const rows=perfRows(),ppl=perfPeople(rows),rk={resolved:'nRes',entered:'nEnt',rate:'rate'}[P.rank]||'nRes';
-  ppl.sort((a,b)=>b[rk]-a[rk]||b.nRes-a.nRes||a.name.localeCompare(b.name));
-  const names=allNames();if(P.user&&!names.some(n=>n[0]===P.user))P.user='';
-  const me=P.user?(ppl.find(p=>p.key===P.user)||fin({key:P.user,name:names.find(n=>n[0]===P.user)[1],res:[],ent:[]})):null;
+  $('#pf-month-from').value=P.monthFrom; $('#pf-month-to').value=P.monthTo;
+  $('#pf-group').value=P.group; $('#pf-cat').value=P.cat; $('#pf-search').value=P.search;
+  
+  const rows=perfRows();
+  let ppl=perfPeople(rows);
+  
+  // Filter by search or working status
+  if (P.search) {
+    ppl = ppl.filter(p => p.name.toLowerCase().includes(P.search.toLowerCase()));
+  } else {
+    ppl = ppl.filter(p => p.working === 'yes');
+  }
+  
+  ppl.sort((a,b)=>b.nRes-a.nRes || b.nEnt-a.nEnt || a.name.localeCompare(b.name));
+  
+  // Handle selected user logic if clicked on profile
+  const selected = P.user ? ppl.find(p=>p.key===P.user) : null;
+  const me = selected || (P.user ? null : null);
+  
   const resolvedAll=rows.filter(r=>r.status==='Resolved'),named=ppl.reduce((a,p)=>a+p.nRes,0),unattr=resolvedAll.length-named;
   const byRes=ppl.slice().sort((a,b)=>b.nRes-a.nRes||a.name.localeCompare(b.name)),pos=me?byRes.findIndex(p=>p.key===me.key)+1:0;
   const ds=resolvedAll.filter(r=>r.updatedAt&&r.date).map(r=>dayDiff(r.date,r.updatedAt.slice(0,10))),avg=ds.length?ds.reduce((a,b)=>a+b,0)/ds.length:null;
   
   const cnt0=Object.fromEntries(ppl.map(p=>[p.key,p.nRes]));
-  $('#pf-chips').innerHTML=`<button type="button" class="pchip" data-user="" aria-pressed="${!P.user}"><span class="av">All</span>Everyone</button>`+names.map(([k,n])=>`<button type="button" class="pchip" data-user="${esc(k)}" aria-pressed="${k===P.user}"><span class="av">${esc(initials(n))}</span>${esc(n)} <small>${cnt0[k]||0}</small></button>`).join('');
+  $('#pf-chips').innerHTML=`<button type="button" class="pchip" data-user="" aria-pressed="${!P.user}"><span class="av">All</span>Everyone</button>`+ppl.map(p=>`<button type="button" class="pchip" data-user="${esc(p.key)}" aria-pressed="${p.key===P.user}"><span class="av">${esc(initials(p.name))}</span>${esc(p.name)} <small>${cnt0[p.key]||0}</small></button>`).join('');
   
   const K=me?[['Issues resolved',fmt(me.nRes),me.nRes&&named?pct(me.nRes,named)+' of the team\'s named resolutions':'none in the selected filters'],['Issues logged',fmt(me.nEnt),'entered by '+me.name],['Rank by resolved',me.nRes?'#'+pos:'—',me.nRes?'of '+ppl.filter(p=>p.nRes).length+' people who resolved issues':'no resolutions yet'],['Logged and now resolved',me.nEnt?me.rate.toFixed(0)+'%':'—','of the issues they logged']]
     :[['People',fmt(ppl.length),'logged or resolved an issue'],['Resolved with a name',fmt(named),'of '+fmt(resolvedAll.length)+' resolved issues'],['Top resolver',byRes[0]&&byRes[0].nRes?byRes[0].name:'—',byRes[0]&&byRes[0].nRes?fmt(byRes[0].nRes)+' resolved · '+pct(byRes[0].nRes,named):'no names recorded'],['Average turnaround',avg==null?'—':fmtDays(avg),avg==null?'needs issues resolved in this system':'issue date to resolved, '+ds.length+(ds.length===1?' issue':' issues')]];
@@ -667,12 +695,12 @@ function renderPerf(){
   else nt.hidden=true;
   
   const mxR=Math.max(1,...ppl.map(p=>p.nRes)),mxE=Math.max(1,...ppl.map(p=>p.nEnt));
-  $('#pf-hint').textContent='Ranked by '+({resolved:'issues resolved',entered:'issues logged',rate:'resolution rate of issues logged'}[P.rank])+'. Click a person to open their profile.';
-  $('#pf-lb').innerHTML=ppl.map((p,i)=>`<button type="button" class="person ${p.key===P.user?'on':''}" data-user="${esc(p.key)}" aria-pressed="${p.key===P.user}" title="${esc(p.name)}: ${p.nRes} resolved, ${p.nEnt} logged"><span class="rk">${i+1}</span><span class="av">${esc(initials(p.name))}</span><span class="who"><b>${esc(p.name)}</b><span>${p.nEnt} logged · ${p.nEnt?p.rate.toFixed(0)+'% resolved':'none logged'}</span></span><span class="duo" aria-hidden="true"><i class="s1" style="width:${p.nRes/mxR*100}%"></i><i class="s3" style="width:${p.nEnt/mxE*100}%"></i></span><span class="big">${p.nRes}<small>resolved</small></span></button>`).join('')||`<div class="empty">${A.loaded?'No names to rank.':'Loading issues…'}</div>`;
+  $('#pf-hint').textContent = P.search ? 'Search results for "'+P.search+'"' : 'Ranked by issues resolved.';
+  $('#pf-lb').innerHTML=ppl.map((p,i)=>`<button type="button" class="person ${p.key===P.user?'on':''}" data-user="${esc(p.key)}" aria-pressed="${p.key===P.user}" title="${esc(p.name)}: ${p.nRes} resolved, ${p.nEnt} logged"><span class="rk">${i+1}</span><span class="av">${esc(initials(p.name))}</span><span class="who"><b>${esc(p.name)}</b><span>${p.nEnt} logged · ${p.nEnt?p.rate.toFixed(0)+'% resolved':'none logged'}</span></span><span class="duo" aria-hidden="true"><i class="s1" style="width:${p.nRes/mxR*100}%"></i><i class="s3" style="width:${p.nEnt/mxE*100}%"></i></span><span class="big">${p.nRes}<small>resolved</small></span></button>`).join('')||`<div class="empty">${A.loaded?'No users to rank.':'Loading issues…'}</div>`;
   
-  const sub=me?me.res:ppl.flatMap(p=>p.res),title=me?me.name:'Team overview';
+  const sub=me?me.res:ppl.flatMap(p=>p.res),title=me?me.name:(P.search?'Search Results':'Active Team Overview');
   const bt=CATS.map(c=>[c,sub.filter(r=>r.category===c).length]).filter(x=>x[1]).sort((a,b)=>b[1]-a[1]),bm=Math.max(1,...bt.map(x=>x[1]));
-  const mo=months.map(m=>[m,sub.filter(r=>r.month===m).length]),mm=Math.max(1,...mo.map(x=>x[1]));
+  const mo=[...new Set(A.issues.map(r=>r.month).filter(Boolean))].sort().map(m=>[m,sub.filter(r=>r.month===m).length]),mm=Math.max(1,...mo.map(x=>x[1]));
   const mini=me?[['Resolved',me.nRes],['Logged',me.nEnt],['Share of team',me.nRes&&named?pct(me.nRes,named):'—'],['Avg turnaround',fmtDays(me.days)]]:[['Resolved',named],['Logged',ppl.reduce((a,p)=>a+p.nEnt,0)],['People',ppl.length],['Avg turnaround',fmtDays(avg)]];
   const recent=sub.slice().sort((a,b)=>String(b.date).localeCompare(a.date)||b.key.localeCompare(a.key,undefined,{numeric:true})).slice(0,6);
   
@@ -731,15 +759,9 @@ function renderRep(){
   $('#r-prev').innerHTML=rep.count?`<h3>${esc(rep.title)}</h3><div class="meta">${esc(rep.sub)} · Generated ${esc(rep.generated)} · ${fmt(rep.count)} issues</div><div>${tags}</div>`
     +rep.sections.map(s=>`<h4>${esc(s.h)}</h4>`+simpleTable(s.head,s.rows.slice(0,LIM),det?null:s.foot)).join('')
     +(det&&rep.count>LIM?`<p class="hint2" style="margin:10px 0 0">Showing the first ${LIM} of ${fmt(rep.count)} rows. The downloaded file has all of them.</p>`:''):`<div class="empty">${A.loaded?'No issues match the filters. Widen the filters to build a report.':'Loading issues…'}</div>`;
-  
-  // FIXED: Removed A.dl dependency
-  const ok = rep.count > 0;
-  document.querySelectorAll('[data-dl]').forEach(b=>{
-      b.disabled = !ok || !!RB.busy;
-      b.title = !ok ? 'No issues to export' : '';
-  });
-  
-  const w=$('#r-warn'),nl=rep.sections.some(s=>s.rows.some(r=>r.some(v=>/[^\u0000-ÿ–—‘’“”…€]/.test(String(v==null?'':v))))); // keeping Latin-1 check for PDF
+  const ok=rep.count>0;
+  document.querySelectorAll('[data-dl]').forEach(b=>{b.disabled=!ok||!!RB.busy;b.title=!ok?'No issues to export':''});
+  const w=$('#r-warn'),nl=rep.sections.some(s=>s.rows.some(r=>r.some(v=>/[^\u0000-ÿ–—‘’“”…€]/.test(String(v==null?'':v))))); 
   w.hidden=!nl;w.textContent=nl?'Some text uses a non-Latin alphabet (for example Bengali). The PDF cannot draw those letters and shows ? instead. Excel and CSV keep the original text.':'';
 }
 
@@ -752,7 +774,6 @@ const loadLibs=k=>libP[k]||(libP[k]=(async()=>{for(const u of LIBS[k])await load
 
 const fname=(rep,ext)=>'MCBP_'+(rep.kind==='detailed'?'Detailed':'Summary')+'_Report_'+todayStr()+'.'+ext;
 
-// NEW: Helper to trigger browser download
 function triggerDownload(blob, filename) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -820,7 +841,6 @@ async function toPdf(rep){
   return doc.output('blob');
 }
 
-// FIXED: Replaced A.dl.save() with standard browser download
 async function doDownload(kind){
   if(RB.busy)return;
   const rep=buildReport();
@@ -1064,6 +1084,7 @@ async function refreshData(opts){
   try{
     const issuesRes = await api.getAllIssues();
     A.issues = (issuesRes.issues||[]).map(d=>norm(d.key||d.issueId,d));
+    A.users = issuesRes.users || [];
     A.canWrite=!!issuesRes.canWrite;
     if (issuesRes.userType) {
       SESSION.type = issuesRes.userType;
@@ -1095,7 +1116,7 @@ function fillAll(){
   fill('#u-status',STATUSES,'All statuses');fill('#u-cat',CATS,'All types');
   fill('#fx-fac',FACTORIES,'All factories');fill('#fx-status',STATUSES,'All statuses');fill('#fx-cat',CATS,'All types');
   
-  fill('#pf-group',GROUPS,'All groups');fill('#pf-cat',CATS,'All types');fill('#pf-rank',['resolved','entered','rate'],'',v=>({resolved:'Issues resolved',entered:'Issues logged',rate:'Resolution rate of logged'}[v]));
+  fill('#pf-group',GROUPS,'All groups');fill('#pf-cat',CATS,'All types');
   fill('#r-group',GROUPS,'All groups');fill('#r-cat',CATS,'All types');fill('#r-status',STATUSES,'All statuses');
 }
 const bind=(id,obj,key)=>$(id).addEventListener('input',e=>{obj[key]=e.target.value;render()});
@@ -1103,7 +1124,7 @@ bind('#f-group',S,'group');bind('#f-cat',S,'cat');bind('#f-status',S,'status');b
 bind('#my-status',MY,'status');bind('#my-cat',MY,'cat');bind('#my-q',MY,'q');
 bind('#u-status',M.upz,'status');bind('#u-cat',M.upz,'cat');bind('#u-q',M.upz,'q');
 bind('#fx-fac',M.fac,'factory');bind('#fx-status',M.fac,'status');bind('#fx-cat',M.fac,'cat');bind('#fx-q',M.fac,'q');
-bind('#pf-month',P,'month');bind('#pf-group',P,'group');bind('#pf-cat',P,'cat');bind('#pf-rank',P,'rank');
+bind('#pf-month-from',P,'monthFrom');bind('#pf-month-to',P,'monthTo');bind('#pf-group',P,'group');bind('#pf-cat',P,'cat');bind('#pf-search',P,'search');
 bind('#r-group',R,'group');bind('#r-cat',R,'cat');bind('#r-status',R,'status');bind('#r-from',R,'from');bind('#r-to',R,'to');bind('#r-entry',R,'entry');bind('#r-resolver',R,'resolver');
 $('#r-pii').addEventListener('change',e=>{R.pii=e.target.checked;render()});
 
@@ -1111,7 +1132,7 @@ $('#reset-home').onclick=()=>{Object.assign(S,{group:'',cat:'',status:'',monthFr
 $('#reset-my').onclick=()=>{Object.assign(MY,{status:'',cat:'',q:''});['#my-status','#my-cat','#my-q'].forEach(s=>$(s).value='');render()};
 $('#reset-u').onclick=()=>{Object.assign(M.upz,{status:'',cat:'',q:''});['#u-status','#u-cat','#u-q'].forEach(s=>$(s).value='');render()};
 $('#reset-f').onclick=()=>{Object.assign(M.fac,{factory:'',status:'',cat:'',q:''});['#fx-fac','#fx-status','#fx-cat','#fx-q'].forEach(s=>$(s).value='');render()};
-$('#reset-p').onclick=()=>{Object.assign(P,{month:'',group:'',cat:'',rank:'resolved',user:''});render()};
+$('#reset-p').onclick=()=>{Object.assign(P,{monthFrom:'',monthTo:'',group:'',cat:'',search:'',user:''});render()};
 $('#reset-r').onclick=()=>{Object.assign(R,{group:'',cat:'',status:'',from:'',to:'',entry:'',resolver:''});render()};
 
 $('#nav-add').onclick=()=>setSub($('#sub-add').hidden);
